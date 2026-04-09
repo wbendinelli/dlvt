@@ -11,7 +11,7 @@ Be respectful and collaborative. We're building a scientific tool for everyone.
 ### 1. Clone and Install
 
 ```bash
-git clone https://github.com/yourusername/dlvt.git
+git clone https://github.com/wbendinelli/dlvt.git
 cd dlvt
 pip install -e ".[dev]"
 ```

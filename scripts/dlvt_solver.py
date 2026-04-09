@@ -116,7 +116,7 @@ def jacobian_eigenvalues(V, C, p):
 # FIGURES
 # ══════════════════════════════════════════════════════════════════════════
 
-OUT = 'figures'
+OUT = '/sessions/upbeat-kind-cannon/mnt/dynamic-leadership-vitality-theory/manuscript/figures'
 
 def fig1_temporal_evolution():
     """Fig 1: V, C, O, Γ vs time — endogenous zombie convergence."""

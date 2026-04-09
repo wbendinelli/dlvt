@@ -7,9 +7,9 @@ organisational complexity dynamics with individual energy constraints.
 
 Paper
 -----
-  "The Carrying Capacity of Leadership: A Dynamic Systems Model of Executive Sustainability"
+  "Dynamic Leadership Vitality Theory: A Formal Model of the Zombie-Leader Equilibrium"
   W. Bendinelli (2026)
-  arXiv preprint, econ.GN / econ.TH
+  Manuscript submitted to The Leadership Quarterly
   JEL Codes: M12, D23, J24, L23
 
 Core Concept
@@ -86,7 +86,7 @@ FIGURES
 
 Module Version
 --------------
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__  = "W. Bendinelli"
 """
 
@@ -99,7 +99,7 @@ from .analysis import (
     is_zombie, classify_regime, regime_map
 )
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "W. Bendinelli"
 __all__ = [
     # Model

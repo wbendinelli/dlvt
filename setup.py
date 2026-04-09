@@ -12,13 +12,13 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='dlvt',
-    version='1.0.0',
+    version='2.0.0',
     author='William Bendinelli',
     author_email='',
     description='Dynamic Leadership Vitality Theory: A dynamical systems model of executive sustainability',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/yourusername/dlvt',
+    url='https://github.com/wbendinelli/dlvt',
     license='MIT',
     packages=find_packages(exclude=['notebooks', 'scripts', 'tests']),
     python_requires='>=3.8',
@@ -44,12 +44,12 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
-        'Topic :: Scientific/Engineering :: Physics',
-        'Topic :: Scientific/Engineering :: Bio-Informatics',
+        'Topic :: Scientific/Engineering',
+        'Topic :: Scientific/Engineering :: Mathematics',
     ],
     keywords='dynamical-systems leadership executive burnout complexity',
     project_urls={
-        'Source': 'https://github.com/yourusername/dlvt',
+        'Source': 'https://github.com/wbendinelli/dlvt',
         'Paper': 'https://doi.org/your.paper.doi',
     },
 )

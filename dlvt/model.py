@@ -4,8 +4,8 @@ dlvt.model
 Core ODE system and numerical integration for the Dynamic Leadership Vitality Theory (DLVT).
 
 This module implements the fundamental dynamical system described in Equations 3.3–3.4
-of "The Carrying Capacity of Leadership: A Dynamic Systems Model of Executive Sustainability"
-(W. Bendinelli, 2026).
+of "Dynamic Leadership Vitality Theory: A Formal Model of the Zombie-Leader Equilibrium"
+(W. Bendinelli, 2026), targeting *The Leadership Quarterly*.
 
 State Variables
 ---------------
@@ -51,8 +51,8 @@ All defaults are from Table 1 in the paper. C₀ = 5.0 throughout all figures.
 
 References
 ----------
-  Bendinelli, W. (2026). The Carrying Capacity of Leadership: A Dynamic Systems Model
-  of Executive Sustainability. SSRN Working Paper.
+  Bendinelli, W. (2026). Dynamic Leadership Vitality Theory: A Formal Model
+  of the Zombie-Leader Equilibrium. Manuscript submitted to The Leadership Quarterly.
 """
 
 from typing import Dict, List, Tuple, Union, Callable

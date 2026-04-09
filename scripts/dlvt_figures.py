@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 DLVT Publication Figures — Version 3 (refined)
-Generates all 7 figures for the SSRN Working Paper.
+Generates all 7 figures for the arXiv paper.
 """
 
 import numpy as np
@@ -20,7 +20,7 @@ rcParams.update({
     'figure.dpi': 300, 'savefig.dpi': 300, 'savefig.bbox': 'tight',
 })
 
-OUT = 'figures'
+OUT = '/sessions/upbeat-kind-cannon/mnt/dynamic-leadership-vitality-theory/manuscript/figures'
 os.makedirs(OUT, exist_ok=True)
 
 V_STRATEGIC = 5.0  # Minimum V for generative strategic work
