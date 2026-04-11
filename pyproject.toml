@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,22 +8,31 @@ version = "2.0.0"
 description = "Dynamic Leadership Vitality Theory: A dynamical systems model of executive sustainability"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
-    {name = "William Bendinelli"}
+    {name = "William Bendinelli", email = "wbendinelli@gmail.com"}
 ]
-keywords = ["dynamical-systems", "leadership", "executive", "burnout", "complexity"]
+keywords = [
+    "dynamical-systems", "leadership", "executive", "burnout",
+    "complexity", "ode", "bifurcation", "computational-social-science",
+    "zombie-leader", "vitality"
+]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Education",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Sociology",
 ]
 
 dependencies = [
@@ -38,6 +47,8 @@ dev = [
     "ipykernel>=6.0",
     "pytest>=7.0",
     "black>=22.0",
+    "build>=0.10",
+    "twine>=4.0",
 ]
 
 [project.urls]
@@ -45,30 +56,13 @@ Homepage = "https://github.com/wbendinelli/dlvt"
 Documentation = "https://github.com/wbendinelli/dlvt#readme"
 Repository = "https://github.com/wbendinelli/dlvt"
 "Bug Tracker" = "https://github.com/wbendinelli/dlvt/issues"
+Paper = "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6455001"
+Changelog = "https://github.com/wbendinelli/dlvt/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["dlvt"]
-exclude = ["notebooks", "scripts", "tests", "*.tests"]
-
-[tool.black]
-line-length = 100
-target-version = ['py38', 'py39', 'py310', 'py311']
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-  # directories
-  \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | build
-  | dist
-  | notebooks
-)/
-'''
+include = ["dlvt*"]
+exclude = ["notebooks*", "scripts*", "tests*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
