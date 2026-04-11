@@ -1,6 +1,7 @@
 # Dynamic Leadership Vitality Theory (DLVT) — Python Package
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI version](https://badge.fury.io/py/dlvt.svg)](https://pypi.org/project/dlvt/)
 [![Tests](https://img.shields.io/badge/tests-38%20passed-brightgreen.svg)](#running-the-tests)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -27,9 +28,7 @@ The model predicts a single robust attractor: a **zombie-leader equilibrium** at
 ### Installation
 
 ```bash
-git clone https://github.com/wbendinelli/dlvt.git
-cd dlvt
-pip install -e .
+pip install dlvt
 ```
 
 **Requirements:** Python ≥ 3.8, NumPy ≥ 1.24, SciPy ≥ 1.10, Matplotlib ≥ 3.7
