@@ -1,0 +1,85 @@
+% ============================================================================
+% Appendix A6 — Carrying Capacity: Derivation and Flux-Threshold Reading
+% ============================================================================
+\section{Carrying Capacity: Derivation and Flux-Threshold Clarification}
+\label{app:carrying}
+
+\subsection{Derivation of Eq.~\eqref{eq:cmax}}
+
+The depletion ratio \eqref{eq:gamma-ratio} compares the drain ceiling
+$\delta O^{\gamma}$ (approached as $V/(V+\varepsilon)\to1$) with the
+recovery ceiling $R$. Setting $\Gamma=1$ defines the critical complexity
+\[
+O_{\max} \;=\; \Bigl(\frac{R}{\delta}\Bigr)^{1/\gamma},
+\]
+and inverting the load kernel \eqref{eq:complexity} gives the capital level
+at which the leader's own accumulation pushes complexity to that point:
+\[
+\Cmax
+= \Biggl(\frac{(R/\delta)^{1/\gamma}-O_0}{\beta}\Biggr)^{1/\eta},
+\]
+which is Eq.~\eqref{eq:cmax}; if $(R/\delta)^{1/\gamma}\le O_0$ we set
+$\Cmax=0$ (baseline load alone is unsustainable: the collapse-prone regime
+of Definition~\ref{def:lowvitality}). At baseline,
+$O_{\max}=\sqrt{150}=12.247$ and $\Cmax=(12.247-1)/0.25=44.99$. The
+comparative statics \eqref{eq:cmax-statics} follow by inspection:
+$\Cmax$ is decreasing in $\beta$ and $\delta$, increasing in $R$
+(both pinned by \texttt{test\_carrying\_capacity\_monotone\_in\_beta} and
+\texttt{\ldots\_in\_R}). The sensitivity to the load exponent is steep
+(Table~\ref{tab:cmax-eta}).
+
+\begin{table}[h]
+\centering
+\caption{Carrying capacity at baseline parameters as the load exponent
+$\eta$ varies (Proposition~\ref{prop:carrying}).}
+\label{tab:cmax-eta}
+\vspace{0.4em}
+\begin{tabular}{ccc}
+\toprule
+$\eta$ & $\Cmax$ & pinned by \\
+\midrule
+$1.0$ & $44.99$ & \texttt{test\_carrying\_capacity\_baseline\_equals\_45}\\
+$1.5$ & $12.65$ & \texttt{test\_carrying\_capacity\_eta1\_5\_paper\_value}\\
+$2.0$ & $6.71$  & \texttt{test\_carrying\_capacity\_eta2\_paper\_value}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{What $\Cmax$ is: a flux threshold}
+
+For $C>\Cmax$ we have $\Gamma>1$: the maximal drain exceeds the maximal
+recovery, so $\dot V<0$ whenever $V/(V+\varepsilon)>R/(\delta O^{\gamma})$,
+and the quasi-equilibrium $V_{\mathrm{qe}}(O)$ of
+Proposition~\ref{prop:nullcline} falls into the depletion band
+(asymptotically $V_{\mathrm{qe}}\approx R\varepsilon/(\delta O^{\gamma})$
+in the strong-drain limit). $\Cmax$ therefore marks the capital level
+beyond which no high-vitality operating point exists \emph{even
+transiently at full recovery}---an energy-flux statement.
+
+\subsection{What $\Cmax$ is not: a bifurcation}
+
+Earlier drafts described $\Cmax$ as ``the critical threshold beyond which
+sustainable equilibria cease to exist.'' That language is retracted, for
+two independent reasons.
+
+\begin{enumerate}
+\item \emph{No fold anywhere.} By Lemma~\ref{lem:trace} and
+Appendix~\ref{app:jacobian}, $\det J>0$ at every interior equilibrium for
+all positive parameters. A saddle-node (fold) bifurcation requires
+$\det J=0$; hence no interior equilibria are created or destroyed at
+$\Cmax$ or anywhere else. The equilibrium count is governed solely by the
+sign of $\Phi(O_0)$ (Theorem~\ref{thm:uniqueness}).
+\item \emph{Trajectories cross it.} $\Cmax$ is not even a dynamical
+barrier: the baseline trajectory from $(V_0,C_0)=(10,40)$ transiently
+overshoots to $C\approx46.4>\Cmax=44.99$ before spiraling back
+(Remark~\ref{rem:ctrap}). A fortiori it cannot serve as a trapping bound,
+which is why the global-stability proof uses the distinct constant
+$\Ctrap=102.67$ of Eq.~\eqref{eq:ctrap}
+(Appendix~\ref{app:gas}).
+\end{enumerate}
+
+The corrected vocabulary is: $\Cmax$ = \emph{carrying capacity} (flux
+threshold separating sustainable from collapse-prone \emph{regimes} as
+parameters vary); $\Ctrap$ = \emph{trapping bound} (forward-invariance
+ceiling used in Theorem~\ref{thm:gas}); and the two differ by more than a
+factor of two at baseline.

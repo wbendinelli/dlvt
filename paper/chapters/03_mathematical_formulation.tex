@@ -1,0 +1,554 @@
+% ============================================================================
+% Chapter 3 — Mathematical Formulation
+%
+% Equation-numbering contract with the companion code (do not renumber):
+%   (3.2) impact, (3.5) vitality ODE, (3.6) capital ODE, (3.7) complexity
+%   coupling, (3.14) carrying capacity, (3.15) comparative statics.
+% Definition 5 = depletion ratio; Definition 7 = strategic threshold.
+% All other displayed mathematics in this section must remain unnumbered.
+% ============================================================================
+\section{Mathematical Formulation}
+\label{sec:formulation}
+
+\subsection{State variables}
+\label{sec:state}
+
+\begin{definition}[Subjective vitality]
+\label{def:vitality}
+$V(t)$ denotes the leader's subjective vitality at time $t$: the energetic
+resource available for deliberate leadership work
+\citep{ryan1997subjective,meijman1998effort}. Vitality is measured in
+arbitrary energy units and confined to $[0,\Vmax]$, where $\Vmax$ is the
+individual's recovery ceiling.
+\end{definition}
+
+\begin{definition}[Career capital]
+\label{def:capital}
+$C(t)\ge 0$ denotes accumulated career capital: the stock of human, social,
+and reputational assets that confer status and opportunity
+\citep{becker1993human}.
+\end{definition}
+
+The state space is
+\begin{equation}
+\label{eq:statespace}
+(V(t),\,C(t)) \in [0,\Vmax]\times[0,\infty),
+\end{equation}
+and Appendix~\ref{app:invariance} verifies that the flow defined below never
+leaves it (positive invariance). Time is measured in weeks; one unit is of
+the order of one working week, though the calibration is illustrative
+(\S\ref{sec:calibration}).
+
+\subsection{Functional forms}
+\label{sec:forms}
+
+\begin{definition}[Organizational complexity]
+\label{def:complexity}
+$O(t) \ge O_0 > 0$ denotes the organizational complexity load facing the
+leader: the volume of interfaces, coordination demands, and matters requiring
+attention \citep{garicano2000hierarchies,hambrick2005executive}. $O_0$ is the
+irreducible baseline load; the coupling of $O$ to the leader's own capital is
+specified in \eqref{eq:complexity} below.
+\end{definition}
+
+\begin{definition}[Energy-gated impact]
+\label{def:impact}
+Leadership impact is
+\begin{equation}
+\label{eq:impact}
+I \;=\; \frac{C\,V}{1+\varphi O},
+\end{equation}
+with suppression coefficient $\varphi>0$.
+\end{definition}
+
+Impact requires both assets ($C$) and energy ($V$)---the energetic-deployment
+constraint absent from classical human-capital theory---and is attenuated by
+complexity friction in the denominator: as $O\to\infty$, $I\to 0$ for any
+finite $(V,C)$.
+
+Vitality dynamics balance two flows. Recovery follows a saturating
+(logistic-type) law toward the ceiling,
+\begin{equation}
+\label{eq:recovery}
+\text{recovery}(V) \;=\; R\Bigl(1-\frac{V}{\Vmax}\Bigr),
+\end{equation}
+with maximal restoration rate $R$ realized at full depletion
+\citep{sonnentag2007recovery}. Drain grows as a power law in complexity and is
+regularized near $V=0$ by a smooth barrier,
+\begin{equation}
+\label{eq:drain}
+\text{drain}(V,O) \;=\; \delta\,O^{\gamma}\,\frac{V}{V+\varepsilon},
+\qquad \gamma \ge 1,\ \varepsilon>0,
+\end{equation}
+where $\delta$ is the energetic cost coefficient and $\gamma$ the complexity
+exponent. The factor $V/(V+\varepsilon)$ encodes that a fully depleted leader
+cannot be drained further (disengagement at exhaustion) and guarantees
+positive invariance (Appendix~\ref{app:invariance}); analytical results are
+stated for $\varepsilon>0$ with the $\varepsilon\to0$ limit tabulated in
+Appendix~\ref{app:epsilon}.
+
+\subsection{The dynamical system}
+\label{sec:system}
+
+The DLVT model is the autonomous planar system
+\begin{equation}
+\label{eq:dVdt}
+\frac{\dd V}{\dd t}
+ \;=\; R\Bigl(1-\frac{V}{\Vmax}\Bigr)
+ \;-\; \delta\,O^{\gamma}\,\frac{V}{V+\varepsilon},
+\end{equation}
+\begin{equation}
+\label{eq:dCdt}
+\frac{\dd C}{\dd t} \;=\; \alpha\,I \;-\; \mu\,C,
+\end{equation}
+where $\alpha$ is the capital accumulation rate and $\mu$ the depreciation
+rate, and the loop is closed by the complexity coupling
+\begin{equation}
+\label{eq:complexity}
+O \;=\; O_0 + \beta\,C^{\eta},
+\qquad \beta>0,\ \eta\ge 1 .
+\end{equation}
+Substituting \eqref{eq:impact} into \eqref{eq:dCdt} gives
+$\dot C = C\,\bigl(\alpha V/(1+\varphi O)-\mu\bigr)$, so capital dynamics
+factor through $C$ itself; this structure carries the scope-absorption result
+of \S\ref{sec:equilibrium-lowvitality}.
+
+\begin{definition}[Depletion ratio]
+\label{def:depletion}
+The depletion ratio is
+\begin{equation}
+\label{eq:gamma-ratio}
+\Gamma(t) \;=\; \frac{\delta\,O(t)^{\gamma}}{R}.
+\end{equation}
+$\Gamma>1$ indicates that the drain ceiling exceeds the recovery ceiling: no
+vitality level near the top of the range can be sustained, and the
+quasi-equilibrium of \S\ref{sec:transient} collapses toward the depletion
+band $\{V<\varepsilon\}$.
+\end{definition}
+
+\begin{assumption}[Scope condition: endogenous load]
+\label{ass:scope}
+Complexity is a deterministic, memoryless image of the leader's own capital,
+\eqref{eq:complexity}. Exogenous load shocks, peer effects, and
+organizational restructuring are outside the model's scope; the exogenous
+variant $\dot V$ with prescribed $C(t)$ (used in
+Proposition~\ref{prop:band}(ii)) is the only departure we analyze.
+\end{assumption}
+
+\subsection{Positive invariance}
+\label{sec:invariance}
+
+At $V=0$ the drain term vanishes and $\dot V|_{V=0}=R>0$, so $V=0$ is
+\emph{repelling}; at $V=\Vmax$, $\dot V<0$; at $C=0$, $\dot C=0$, so the
+$C$-axis is invariant and capital cannot become negative. Hence
+$[0,\Vmax]\times[0,\infty)$ is forward invariant. The elementary verification
+is Appendix~\ref{app:invariance}. Two consequences deserve emphasis. First,
+trajectories cannot reach $V=0$: the ``finite-time depletion to zero''
+theorem of earlier drafts was false as stated and is replaced by
+Proposition~\ref{prop:band}. Second, $\{C=0\}$ being invariant means the
+global-stability statement of Theorem~\ref{thm:gas} is necessarily about the
+\emph{open} set $\{C>0\}$.
+
+\subsection{Nullcline geometry and transient depletion}
+\label{sec:transient}
+
+Setting $\dot V=0$ in \eqref{eq:dVdt} and clearing denominators shows that,
+for each fixed complexity level $O$, the vitality nullcline solves the
+quadratic
+\begin{equation}
+\label{eq:vqe-quadratic}
+\frac{R}{\Vmax}V^{2}
+\;-\;\Bigl(R-\frac{R\varepsilon}{\Vmax}-\delta O^{\gamma}\Bigr)V
+\;-\;R\varepsilon \;=\;0 .
+\end{equation}
+
+\begin{proposition}[Vitality nullcline: single branch, strictly decreasing]
+\label{prop:nullcline}
+For every $O>0$ (equivalently every $C\ge0$), the quadratic
+\eqref{eq:vqe-quadratic} has exactly one positive root $V_{\mathrm{qe}}(O)$,
+and along the nullcline $V_{\mathrm{qe}}$ is strictly decreasing in $C$.
+\end{proposition}
+
+\begin{proof}
+The product of the roots of \eqref{eq:vqe-quadratic} is
+$-\varepsilon \Vmax<0$, so the roots are real of opposite sign: exactly one
+positive root. Writing $F(V,C)$ for the right side of \eqref{eq:dVdt},
+$\partial F/\partial V = -R/\Vmax - \delta O^{\gamma}\varepsilon/(V+\varepsilon)^{2}<0$
+and
+$\partial F/\partial C = -\delta\gamma O^{\gamma-1}O'(C)\,V/(V+\varepsilon)<0$
+for $V,C>0$; by the implicit function theorem
+$\dd V_{\mathrm{qe}}/\dd C = -F_C/F_V<0$.
+\end{proof}
+
+The positive root $V_{\mathrm{qe}}(O)$ is the \emph{quasi-equilibrium} of the
+vitality equation at frozen complexity. At the baseline calibration with
+$O=O_0=1$ it sits near the ceiling, $V_{\mathrm{qe}}\approx 9.93$
+($\approx0.99\,\Vmax$); the closed-form approximation
+$V_{\mathrm{qe}}\approx R\varepsilon/(\delta O^{\gamma})$ used in earlier
+drafts is valid \emph{only} in the strong-drain limit
+$\delta O^{\gamma}\gg R$ and is badly wrong at moderate load (at $O=1$ it
+returns $15>\Vmax$).
+
+\begin{proposition}[Finite-time band entry; corrected]
+\label{prop:band}
+Consider the vitality equation \eqref{eq:dVdt} with an exogenous complexity
+path $O(t)$ (Assumption~\ref{ass:scope}).
+\begin{itemize}
+\item[(i)] $V=0$ is repelling: $\dot V|_{V=0}=R>0$. In particular no
+trajectory reaches $V=0$ in finite or infinite time, and the ``finite-time
+depletion to zero'' claim of earlier drafts is retracted.
+\item[(ii)] If $O(t)\ge\Omega$ for all $t\ge t_0$ with
+$\Omega^{\gamma} > 2R/\delta$, then any trajectory with
+$V(t_0)=V_0\ge\varepsilon$ enters the depletion band
+$\{V<\varepsilon\}$ no later than
+\begin{equation}
+\label{eq:Tstar}
+T^{*} \;=\; t_0 \;+\;
+\frac{V_0-\varepsilon}{\;\tfrac{1}{2}\delta\Omega^{\gamma}-R\;}.
+\end{equation}
+\item[(iii)] If instead $O(t)\equiv O$ is constant, $V(t)$ converges
+monotonically and exponentially to the positive quasi-equilibrium
+$V_{\mathrm{qe}}(O)$, the positive root of \eqref{eq:vqe-quadratic}.
+\end{itemize}
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+(i) is immediate from \eqref{eq:dVdt}. (ii) For $V\ge\varepsilon$ we have
+$V/(V+\varepsilon)\ge\tfrac12$, so
+$\dot V \le R-\tfrac12\delta\Omega^{\gamma}<0$, a uniformly negative bound;
+integrating gives \eqref{eq:Tstar}. (iii) At fixed $O$ the scalar flow has a
+single positive rest point by Proposition~\ref{prop:nullcline}, with
+$F_V<0$ there, so convergence is exponential at rate $|F_V(V_{\mathrm{qe}})|$.
+\end{proof}
+
+Thus sustained overload drives vitality into an $\varepsilon$-neighborhood of
+zero in finite time---the phenomenologically relevant statement---while zero
+itself is never attained.
+
+\subsection{Equilibrium structure: existence and uniqueness}
+\label{sec:equilibrium}
+
+Interior equilibria satisfy $\dot C=0$ with $C>0$, which by
+\eqref{eq:impact}--\eqref{eq:dCdt} forces $\alpha V/(1+\varphi O)=\mu$, i.e.\
+the \emph{capital nullcline}
+\begin{equation}
+\label{eq:cnullcline}
+V_c(O) \;=\; \frac{\mu}{\alpha}\,\bigl(1+\varphi O\bigr),
+\end{equation}
+an increasing affine function of $O$. Substituting \eqref{eq:cnullcline} into
+the vitality equation defines the reduced residual
+\begin{equation}
+\label{eq:phi-residual}
+\Phi(O) \;=\;
+R\Bigl(1-\frac{V_c(O)}{\Vmax}\Bigr)
+\;-\;\delta\,O^{\gamma}\,\frac{V_c(O)}{V_c(O)+\varepsilon},
+\end{equation}
+whose roots with $O>O_0$ (equivalently $C>0$) are exactly the interior
+equilibria.
+
+\begin{theorem}[Existence and uniqueness, global]
+\label{thm:uniqueness}
+For every parameter vector in $\mathbb{R}^{11}_{>0}$, the system
+\eqref{eq:dVdt}--\eqref{eq:complexity} has \emph{at most one} interior
+equilibrium $(V^{*},C^{*})$ in the entire positive orthant. An interior
+equilibrium exists if and only if $\Phi(O_0)>0$, which holds at the baseline
+calibration.
+\end{theorem}
+
+\begin{proof}
+Differentiate \eqref{eq:phi-residual}:
+\[
+\Phi'(O)
+= -\frac{R}{\Vmax}\,V_c'(O)
+\;-\;\delta\gamma O^{\gamma-1}\,\frac{V_c(O)}{V_c(O)+\varepsilon}
+\;-\;\delta O^{\gamma}\,\frac{\varepsilon\,V_c'(O)}{\bigl(V_c(O)+\varepsilon\bigr)^{2}} .
+\]
+With $V_c'(O)=\mu\varphi/\alpha>0$, every one of the three terms is strictly
+negative for $O>0$: the first because $R,\Vmax>0$; the second because
+$V_c>0$; the third because $\varepsilon>0$. Hence $\Phi$ is strictly
+decreasing on $(0,\infty)$. Since $O(C)=O_0+\beta C^{\eta}$ is strictly
+increasing in $C$, the map $C\mapsto\Phi(O(C))$ is strictly decreasing, so it
+has at most one root: at most one interior equilibrium, with no restriction
+to any bounded region. For existence: $\Phi$ is continuous, strictly
+decreasing, and $\Phi(O)\to-\infty$ as $O\to\infty$ (the drain term diverges
+while the recovery term is bounded above), so a root with $O>O_0$ exists iff
+$\Phi(O_0)>0$. At baseline, $V_c(O_0)=2.3$ and
+$\Phi(O_0)=3(1-0.23)-0.02\cdot(2.3/2.4)\approx 2.29>0$.
+\end{proof}
+
+Uniqueness in the \emph{entire} positive orthant is stronger than the
+bounded-region statements of earlier drafts and matters for what follows: it
+excludes multistability outright, for all positive parameter values, and it
+is one of the three ingredients of the global-stability proof
+(Appendix~\ref{app:gas}).
+
+\subsection{Baseline calibration}
+\label{sec:calibration}
+
+Table~\ref{tab:parameters} reports the baseline calibration used in all
+figures and in the companion code (initial capital $C_0=5.0$ throughout).
+
+\begin{table}[t]
+\centering
+\caption{Baseline calibration (Table~1). \emph{The calibration is
+illustrative}: it is chosen for a well-conditioned phase portrait in
+dimensionless units and has no empirical anchor. No quantitative claim in
+this paper should be read as calibrated to data; qualitative claims are
+stated with their parameter dependence. Derived quantities are reported at
+$\varepsilon=0.1$; see Appendix~\ref{app:epsilon} for the
+$\varepsilon\to0$ extrapolation.}
+\label{tab:parameters}
+\vspace{0.4em}
+\begin{tabular}{clll}
+\toprule
+Symbol & Code key & Baseline & Interpretation \\
+\midrule
+$R$            & \texttt{R}     & $3.0$  & vitality recovery rate \\
+$\Vmax$        & \texttt{Vmax}  & $10.0$ & maximum vitality capacity \\
+$\delta$       & \texttt{delta} & $0.02$ & energetic cost coefficient \\
+$\gamma$       & \texttt{gamma} & $2.0$  & complexity exponent in drain \\
+$O_0$          & \texttt{O0}    & $1.0$  & baseline organizational complexity \\
+$\beta$        & \texttt{beta}  & $0.25$ & capital--complexity coupling \\
+$\eta$         & \texttt{eta}   & $1.0$  & capital scaling exponent \\
+$\alpha$       & \texttt{alpha} & $0.1$  & capital accumulation rate \\
+$\varphi$      & \texttt{phi}   & $0.15$ & complexity--impact suppression \\
+$\mu$          & \texttt{mu}    & $0.2$  & capital depreciation rate \\
+$\varepsilon$  & \texttt{eps}   & $0.1$  & smooth-barrier regularization \\
+\midrule
+\multicolumn{4}{l}{\emph{Derived quantities at baseline ($\varepsilon=0.1$)}}\\
+$V^{*}$        &                & $4.70$   & equilibrium vitality (\S\ref{sec:equilibrium-lowvitality}) \\
+$C^{*}$        &                & $32.03$  & equilibrium capital \\
+$O^{*}$        &                & $9.01$   & equilibrium complexity \\
+$\lambda_{1,2}$&                & $-0.205\pm0.331i$ & Jacobian eigenvalues (App.~\ref{app:jacobian}) \\
+$\Cmax$        &                & $45.0$   & carrying capacity, $\eta=1$ (Prop.~\ref{prop:carrying}) \\
+$\Cmax|_{\eta=1.5}$ &           & $12.7$   & carrying capacity at $\eta=1.5$ \\
+$\Cmax|_{\eta=2}$   &           & $6.7$    & carrying capacity at $\eta=2$ \\
+$\Ctrap$       &                & $102.67$ & trapping bound (Thm.~\ref{thm:gas}); $\Ctrap\neq\Cmax$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Because the calibration is illustrative, we report which single ratio governs
+the qualitative regime. Along the capital nullcline \eqref{eq:cnullcline},
+equilibrium vitality is proportional to $\mu/\alpha$; the classification of
+\S\ref{sec:equilibrium-lowvitality} therefore turns on $\mu/\alpha$ relative
+to an explicit threshold. At baseline $\mu/\alpha=2.0$, against a flip value
+of $2.163$ at which $V^{*}$ crosses $\Vstrat$---an $8\%$ margin. Across a
+$\pm2\times$ log-uniform hypercube around the baseline, the probability that
+a stable interior equilibrium classifies as low-vitality is approximately
+$0.49$ (companion-code robustness sweep). The baseline is thus a genuinely
+knife-edge illustration, and we present it as such.
+
+\subsection{The low-vitality equilibrium and scope absorption}
+\label{sec:equilibrium-lowvitality}
+
+\begin{definition}[Strategic vitality threshold]
+\label{def:threshold}
+The strategic vitality threshold is $\Vstrat=\theta\,\Vmax$ with the
+stipulated value $\theta=0.5$: the minimum vitality for sustained strategic
+(as opposed to reactive) leadership work. The value of $\theta$ is a
+labeling convention, not an estimated quantity; sensitivity of the
+classification to $\theta$ is reported in \S\ref{sec:limitations}.
+\end{definition}
+
+\begin{definition}[Low-vitality equilibrium; outcome regimes]
+\label{def:lowvitality}
+A stable interior equilibrium $(V^{*},C^{*})$ is a \emph{low-vitality
+equilibrium} if $V^{*}<\Vstrat$. A parameter vector is classified
+\emph{sustainable} if its stable interior equilibrium has
+$V^{*}\ge\Vstrat$, \emph{low-vitality} if $V^{*}<\Vstrat$, and
+\emph{collapse-prone} if no stable interior equilibrium exists (equivalently
+$\Cmax=0$ in the sense of Proposition~\ref{prop:carrying}). Earlier drafts
+called the low-vitality equilibrium the ``zombie-leader equilibrium''; the
+label is retired as a construct and survives only in legacy code names.
+\end{definition}
+
+At any interior equilibrium, \eqref{eq:cnullcline} gives
+\begin{equation}
+\label{eq:vstar}
+V^{*} \;=\; \frac{\mu}{\alpha}\bigl(1+\varphi O^{*}\bigr),
+\end{equation}
+and at the baseline calibration the unique interior equilibrium is
+\[
+V^{*}=4.7025,\qquad C^{*}=32.0337,\qquad O^{*}=9.0084
+\qquad(\varepsilon=0.1),
+\]
+a low-vitality equilibrium sitting $5.9\%$ below $\Vstrat$; the
+$\varepsilon\to0$ closed form gives $V^{*}=4.67994$, $C^{*}=31.7325$
+(Appendix~\ref{app:equilibrium}). Convergence is a damped spiral with
+eigenvalues $-0.205\pm0.331i$ (Appendix~\ref{app:jacobian}).
+
+\begin{corollary}[Scope absorption; intervention asymmetry]
+\label{cor:scope}
+In the model family \eqref{eq:dVdt}--\eqref{eq:complexity}, where the drain
+kernel is the separable power law $\delta f(O)g(V)$ with $f(O)=O^{\gamma}$
+and every appearance of $C$ in the flow is channeled through
+$O=O_0+\beta C^{\eta}$, the equilibrium pair $(V^{*},O^{*})$ solves the
+$\beta$-free system
+\[
+R\Bigl(1-\frac{V}{\Vmax}\Bigr)=\delta O^{\gamma}\frac{V}{V+\varepsilon},
+\qquad
+V=\frac{\mu}{\alpha}(1+\varphi O).
+\]
+Consequently, on the interior branch: (i) $V^{*}$ and $O^{*}$ are invariant
+in $\beta$; (ii) the product $\beta\,C^{*\eta}=O^{*}-O_0$ is conserved. At
+baseline ($\eta=1$), $\beta C^{*}=8.008$ at $\varepsilon=0.1$ and exactly
+$7.933$ in the $\varepsilon\to0$ closed form---the invariant itself is
+$\varepsilon$-dependent and must be quoted with its regularization
+(Appendix~\ref{app:epsilon}).
+\end{corollary}
+
+\begin{proof}
+Both equilibrium conditions are equations in $(V,O)$ alone; $\beta$ enters
+the dynamics only through the map $C\mapsto O$. Given the unique root
+$(V^{*},O^{*})$ (Theorem~\ref{thm:uniqueness}), inverting
+\eqref{eq:complexity} yields $C^{*}=((O^{*}-O_0)/\beta)^{1/\eta}$, whence
+$\beta C^{*\eta}=O^{*}-O_0$ independent of $\beta$.
+\end{proof}
+
+\begin{remark}[Honest status of Corollary~\ref{cor:scope}]
+\label{rem:scope}
+Earlier drafts headlined this result as a surprising discovery
+(``Lemma~2''); the companion code retains that name. It is more honestly a
+\emph{reparameterization invariance of the power-law kernel family}: with
+$\eta=1$, $\beta$ multiplies a pure power of $C$ and is absorbed by
+rescaling the units of capital, $C\mapsto\beta C$. It is \emph{not} a robust
+law of leadership dynamics: under load or drain kernels in which the coupling
+parameter also sets a saturation or curvature scale that cannot be absorbed
+by rescaling $C$ (exponential and Hill specifications are the canonical
+cases), the cancellation fails and $\partial V^{*}/\partial\beta\neq0$
+generically (\S\ref{sec:robustness}, Appendix~\ref{app:bifurcation}). The
+managerial payload survives within the declared family: \emph{scope reduction
+alone cannot raise equilibrium vitality; recovery-side interventions---%
+raising $R$, lowering $\mu$, raising $\alpha$---can.}
+\end{remark}
+
+\subsection{Stability: local, spectral, and global}
+\label{sec:stability}
+
+\begin{lemma}[Trace negativity: no Hopf bifurcation]
+\label{lem:trace}
+At any interior equilibrium of \eqref{eq:dVdt}--\eqref{eq:complexity}, for
+all positive parameters, the Jacobian $J$ satisfies
+$\operatorname{tr}J<0$ and $\det J>0$. Hence every interior equilibrium is
+locally asymptotically stable, and no Hopf bifurcation occurs anywhere in
+parameter space.
+\end{lemma}
+
+\begin{proof}[Proof sketch]
+$J_{VV}=-R/\Vmax-\delta O^{\gamma}\varepsilon/(V+\varepsilon)^{2}<0$
+unconditionally. For $J_{CC}$: the condition $\dot C=0$ at an interior
+equilibrium forces $\alpha V/(1+\varphi O)=\mu$, so the first and third
+terms of
+$J_{CC}=\alpha V/(1+\varphi O)
+-\alpha CV\varphi\,O'(C)/(1+\varphi O)^{2}-\mu$
+cancel, leaving
+$J_{CC}=-\alpha C V\varphi\,O'(C)/(1+\varphi O)^{2}<0$.
+Thus $\operatorname{tr}J=J_{VV}+J_{CC}<0$. Moreover
+$J_{VC}<0$ and $J_{CV}=\alpha C/(1+\varphi O)>0$, so
+$\det J=J_{VV}J_{CC}-J_{VC}J_{CV}>0$. A Hopf bifurcation requires a purely
+imaginary conjugate pair, i.e.\ $\operatorname{tr}J=0$, which is impossible;
+this is consistent with (and implied more globally by) the Dulac certificate
+$B=1/C$ of Theorem~\ref{thm:gas}. Full entries and baseline numerics are in
+Appendix~\ref{app:jacobian}.
+\end{proof}
+
+\begin{proposition}[Carrying capacity as a flux threshold, not a bifurcation]
+\label{prop:carrying}
+Define the carrying capacity
+\begin{equation}
+\label{eq:cmax}
+\Cmax \;=\;
+\Biggl(\frac{(R/\delta)^{1/\gamma}-O_0}{\beta}\Biggr)^{1/\eta},
+\end{equation}
+the capital level at which the depletion ratio \eqref{eq:gamma-ratio}
+reaches $\Gamma=1$ (evaluated at $V=\Vmax$); $\Cmax=44.99$ at baseline. Then
+\begin{equation}
+\label{eq:cmax-statics}
+\frac{\partial \Cmax}{\partial\beta}<0,\qquad
+\frac{\partial \Cmax}{\partial\delta}<0,\qquad
+\frac{\partial \Cmax}{\partial R}>0 .
+\end{equation}
+$\Cmax$ is a \emph{flux threshold}: for $C>\Cmax$ the drain ceiling exceeds
+the recovery ceiling and vitality is driven toward the depletion band
+regardless of its current level. It is \emph{not} a bifurcation point: by
+Lemma~\ref{lem:trace}, $\det J>0$ at every interior equilibrium for all
+positive parameters, so no saddle-node (fold) bifurcation exists anywhere,
+and no equilibria are created or destroyed at $\Cmax$. Earlier drafts'
+description of $\Cmax$ as a ``critical threshold beyond which equilibria
+cease to exist'' is retracted (Appendix~\ref{app:carrying}).
+\end{proposition}
+
+\begin{theorem}[Global asymptotic stability]
+\label{thm:gas}
+Let the interior equilibrium exist (Theorem~\ref{thm:uniqueness}) and define
+the trapping rectangle $\Omega=[0,\Vmax]\times[0,\Ctrap]$ with
+\begin{equation}
+\label{eq:ctrap}
+\Ctrap^{\eta} \;=\;
+\frac{\bigl(\alpha\Vmax/\mu-1\bigr)/\varphi \;-\; O_0}{\beta},
+\end{equation}
+the unique capital level at which $V_c(O(C))=\Vmax$; $\Ctrap=102.67$ at
+baseline. Then $\Omega$ is forward invariant, every trajectory with
+$V_0\in[0,\Vmax]$, $C_0>0$ enters $\Omega$, and the interior equilibrium is
+globally asymptotically stable on the \emph{open} set
+$\{C>0\}\cap\Omega$. The set $\{C=0\}$ is invariant, and the axis
+equilibrium $(V\approx9.934,\,C=0)$ is a saddle whose stable manifold lies
+in $\{C=0\}$, so it attracts no interior trajectory.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+(1)~\emph{Trapping:} on $C=\Ctrap$, $\alpha V/(1+\varphi O)\le
+\alpha\Vmax/(1+\varphi O(\Ctrap))=\mu$, so $\dot C\le0$; the remaining edges
+are handled by \S\ref{sec:invariance}. (2)~\emph{No closed orbits:} the Dulac
+function $B(V,C)=1/C$ gives
+$\nabla\!\cdot\!(B\mathbf{F})<0$ on $\{V>0,C>0\}$, term by term, ruling out
+closed orbits and orbit graphics in the open quadrant (Bendixson--Dulac).
+(3)~\emph{Limit sets:} $\Omega$ is compact; by Poincar\'e--Bendixson the
+$\omega$-limit set of any interior trajectory is an equilibrium, and by
+Theorem~\ref{thm:uniqueness}, Lemma~\ref{lem:trace}, and the saddle structure
+of the axis equilibrium, that equilibrium is the interior one. The complete
+argument, including the invariance verification edge by edge, is
+Appendix~\ref{app:gas}.
+\end{proof}
+
+\begin{remark}[$\Ctrap\neq\Cmax$: the corrected trapping bound]
+\label{rem:ctrap}
+Earlier drafts used the rectangle $[0,\Vmax]\times[0,\Cmax]$ with
+$\Cmax=44.99$. That rectangle \emph{leaks}: at $(V,C)=(\Vmax,\,44.99)$ one
+computes $\dot C\approx+6.86>0$, and the trajectory from $(V_0,C_0)=(10,40)$
+overshoots to $C\approx46.4$ before returning. The trapping bound
+\eqref{eq:ctrap} and the carrying capacity \eqref{eq:cmax} are distinct
+objects---a forward-invariance bound versus an energy-flux threshold---and
+conflating them invalidated the earlier proof
+(Appendix~\ref{app:gas}).
+\end{remark}
+
+\begin{remark}[Why Poincar\'e--Bendixson]
+No elementary global Lyapunov function appears to exist for this system:
+weighted quadratic forms centered at the equilibrium fail because the
+cross terms generated by the $O^{\gamma}$ drain and the $1/(1+\varphi O)$
+gate cannot be dominated globally. The Dulac-plus-Poincar\'e--Bendixson
+route is therefore not a convenience but the appropriate tool for this
+planar system.
+\end{remark}
+
+\subsection{Robustness of the specification}
+\label{sec:robustness}
+
+\paragraph{Linear drain ($\gamma=1$).}
+With a linear complexity kernel the low-vitality regime disappears at
+baseline: the unique stable equilibrium is \emph{sustainable}, at
+$V^{*}\approx8.56$ ($C^{*}\approx83.5$). Nonlinear complexity scaling
+($\gamma>1$) is therefore a necessary condition for the low-vitality
+\emph{regime}---but not for the existence of an attractor, which persists at
+$\gamma=1$. The qualitative theory stands or falls with the convexity of the
+load--drain relationship, an empirically checkable premise.
+
+\paragraph{Kernel dependence of scope absorption.}
+Corollary~\ref{cor:scope} is a property of the power-law family. Under
+exponential or Hill (saturating) kernels the $\beta$-invariance of $V^{*}$
+fails, and $|\partial V^{*}/\partial\beta|$ grows with the departure from
+separability (Proposition~P4 of \S\ref{sec:propositions};
+Appendix~\ref{app:bifurcation}). We flag this boundary explicitly so the
+intervention asymmetry is not over-generalized.

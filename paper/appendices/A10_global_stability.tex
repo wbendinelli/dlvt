@@ -1,0 +1,146 @@
+% ============================================================================
+% Appendix A10 — Global Asymptotic Stability: Full Proof
+% ============================================================================
+\section{Global Asymptotic Stability: Full Proof of Theorem~\ref{thm:gas}}
+\label{app:gas}
+
+We assemble the complete proof from four ingredients: (1)~a forward-invariant
+trapping rectangle with the \emph{corrected} ceiling $\Ctrap$;
+(2)~a Bendixson--Dulac certificate excluding closed orbits;
+(3)~uniqueness and local stability of the interior equilibrium; and
+(4)~the boundary structure of the invariant axis $\{C=0\}$. Throughout,
+parameters are positive and the interior equilibrium exists
+($\Phi(O_0)>0$, Theorem~\ref{thm:uniqueness}).
+
+\subsection{Step 1: the trapping rectangle, and why the old one leaked}
+
+Let $\Ctrap$ be defined by Eq.~\eqref{eq:ctrap}, i.e.\ the unique capital
+level at which the capital nullcline reaches the vitality ceiling,
+$V_c(O(\Ctrap))=\Vmax$; at baseline
+$\Ctrap=\bigl((0.1\cdot10/0.2-1)/0.15-1\bigr)/0.25=102.67$. Set
+$\Omega=[0,\Vmax]\times[0,\Ctrap]$.
+
+\emph{Forward invariance.} On the four faces of $\Omega$:
+\begin{itemize}
+\item $V=0$: $\dot V=R>0$ (inward; Appendix~\ref{app:invariance}).
+\item $V=\Vmax$: $\dot V=-\delta O^{\gamma}\Vmax/(\Vmax+\varepsilon)<0$
+(inward).
+\item $C=0$: $\dot C=0$ (invariant face).
+\item $C=\Ctrap$: for every $V\in[0,\Vmax]$,
+\[
+\dot C
+= C\Bigl(\frac{\alpha V}{1+\varphi O(\Ctrap)}-\mu\Bigr)
+\le C\Bigl(\frac{\alpha \Vmax}{1+\varphi O(\Ctrap)}-\mu\Bigr)
+= 0,
+\]
+with equality only at the corner $V=\Vmax$, where the $V$-component points
+strictly inward; no trajectory can exit through this face.
+\end{itemize}
+Moreover $\Omega$ is \emph{absorbing} for the region of interest: if
+$C_0>\Ctrap$ (with $V_0\in[0,\Vmax]$), then $O>O(\Ctrap)$ implies
+$\alpha V/(1+\varphi O)<\mu$, so $\dot C<0$ strictly until the trajectory
+enters $\Omega$; hence every trajectory with $V_0\in[0,\Vmax]$, $C_0>0$
+eventually lies in $\Omega$.
+
+\emph{The correction.} Earlier drafts used the rectangle
+$[0,\Vmax]\times[0,\Cmax]$ with the carrying capacity $\Cmax=44.99$ of
+Eq.~\eqref{eq:cmax} as ceiling. That rectangle is \emph{not} forward
+invariant: at $(V,C)=(\Vmax,44.99)$, $O=12.25$ and
+\[
+\dot C = C\Bigl(\frac{\alpha\Vmax}{1+\varphi O}-\mu\Bigr)
+       = 44.99\,(0.3525-0.2) \approx +6.86 \;>\;0 ,
+\]
+so the flow exits through the ceiling; concretely, the baseline trajectory
+from $(V_0,C_0)=(10,40)$ overshoots to $C\approx46.4$ before returning.
+The carrying capacity is a flux threshold (Appendix~\ref{app:carrying});
+the trapping bound is the nullcline-ceiling constant $\Ctrap$, and the two
+must not be conflated. All results downstream of the trapping rectangle
+are stated with $\Ctrap$; the certificate is verified numerically on
+$[0,\Vmax]\times[0,\,1.2\,\Ctrap]$ by
+\texttt{test\_bendixson\_dulac\_trapping\_rectangle\_is\_valid}.
+
+\subsection{Step 2: Bendixson--Dulac certificate (no closed orbits)}
+
+Take the Dulac function $B(V,C)=1/C$ on the open quadrant
+$Q=\{V>0,\,C>0\}$, and write the field as
+$\mathbf{F}=(F,G)$ with $G=C\,g(V,O)$, $g=\alpha V/(1+\varphi O)-\mu$.
+Then
+\[
+\nabla\!\cdot\!\bigl(B\mathbf{F}\bigr)
+= \frac{\partial}{\partial V}\Bigl(\frac{F}{C}\Bigr)
++ \frac{\partial}{\partial C}\bigl(g\bigr)
+= \frac{1}{C}\Bigl(
+   -\frac{R}{\Vmax}
+   -\frac{\delta O^{\gamma}\varepsilon}{(V+\varepsilon)^{2}}
+  \Bigr)
+\;-\;
+\frac{\alpha V\varphi\,\beta\eta C^{\eta-1}}{(1+\varphi O)^{2}} .
+\]
+The first bracket is strictly negative everywhere; the second term is
+non-positive (strictly negative for $V>0$). Hence
+$\nabla\!\cdot\!(B\mathbf{F})<0$ on all of $Q$---no sign changes, no
+degenerate set. By the Bendixson--Dulac theorem
+\citep{strogatz2015nonlinear}, $Q$ contains no closed orbit; the same
+Green's-theorem argument excludes graphics (closed curves assembled from
+orbits and equilibria) whose interior lies in $Q$. Numerically, the
+supremum of the divergence over a dense grid in
+$[0,\Vmax]\times(0,\,1.2\,\Ctrap]$ is $\approx-3.5\times10^{-3}$, bounded
+away from zero
+(\texttt{test\_bendixson\_dulac\_divergence\_strictly\_negative}).
+
+\subsection{Step 3: equilibria inside $\Omega$}
+
+By Theorem~\ref{thm:uniqueness} there is exactly one interior equilibrium
+$(V^{*},C^{*})$; by the nullcline bound of Appendix~\ref{app:equilibrium}
+it satisfies $C^{*}<\Ctrap$, so it lies in the interior of $\Omega$. By
+Lemma~\ref{lem:trace} (trace negative, determinant positive) it is locally
+asymptotically stable---at baseline a spiral sink
+(Appendix~\ref{app:jacobian}). The only other equilibrium in $\Omega$ is
+the axis point $(V_{\mathrm{axis}},0)$, $V_{\mathrm{axis}}\approx9.934$,
+which is a hyperbolic saddle whose stable manifold is contained in the
+invariant axis $\{C=0\}$ (Appendix~\ref{app:regularization}).
+
+\subsection{Step 4: Poincar\'e--Bendixson assembly}
+
+Let $(V_0,C_0)\in\Omega$ with $C_0>0$. By Step~1 the forward orbit remains
+in the compact set $\Omega$, and by invariance of $\{C=0\}$ together with
+uniqueness of solutions it remains in $Q$ for all finite time. Its
+$\omega$-limit set $L$ is nonempty, compact, connected, and invariant. By
+the Poincar\'e--Bendixson theorem, $L$ is an equilibrium, a closed orbit,
+or a graphic. Step~2 excludes closed orbits and graphics in $Q$. Could $L$
+meet the axis? The only invariant subsets of the axis face within $\Omega$
+are the saddle and its axis-internal stable connections; if $L$ contained
+the saddle, then (since $L$ is not the saddle alone unless the orbit
+converges to it) $L$ would have to contain an orbit converging to the
+saddle---an orbit in the saddle's stable manifold, which lies in
+$\{C=0\}$ and is unreachable from $Q$. And convergence of the interior
+orbit itself to the saddle is likewise impossible for the same reason.
+Hence $L=\{(V^{*},C^{*})\}$: every trajectory with $C_0>0$ converges to
+the interior equilibrium, which is locally stable by Step~3. This proves
+global asymptotic stability on the open set $\{C>0\}\cap\Omega$, and, via
+the absorbing property of Step~1, on
+$\{(V,C):V\in[0,\Vmax],\,C>0\}$. \hfill$\square$
+
+\subsection{Remarks}
+
+\begin{enumerate}
+\item \emph{The basin is open, and that is sharp.} $\{C=0\}$ is invariant:
+a leader with exactly zero capital stays at zero capital, and the axis
+flow converges to $(9.934,\,0)$---full vitality, no career. The theorem
+therefore cannot be strengthened to the closed quadrant, and the
+low-vitality equilibrium's basin is exactly $\{C>0\}$ within $\Omega$.
+\item \emph{Why not a Lyapunov function.} No elementary global Lyapunov
+function appears to exist: weighted quadratic forms
+$a(V-V^{*})^{2}+b(C-C^{*})^{2}$ fail because the indefinite cross terms
+generated by the $O^{\gamma}$ drain and the $1/(1+\varphi O)$ impact gate
+cannot be dominated over all of $\Omega$ by any constant choice of
+$(a,b)$. For a planar system, Dulac plus Poincar\'e--Bendixson is the
+appropriate---not merely convenient---instrument; the certificate is also
+mechanically checkable, which the companion tests exploit.
+\item \emph{Numerical corroboration.} An $8\times8$ grid of initial
+conditions spanning $[0.1,\Vmax]\times[0.5,\,2\Cmax]$ converges to
+$(V^{*},C^{*})$ to within $10^{-2}$ in all 64 cases
+(\texttt{test\_basin\_sweep\_all\_trajectories\_converge\_to\_zombie}),
+providing an end-to-end check that no numerical artifact defeats the
+analytical result.
+\end{enumerate}

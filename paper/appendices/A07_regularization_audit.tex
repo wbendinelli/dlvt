@@ -1,0 +1,77 @@
+% ============================================================================
+% Appendix A7 — Regularization Audit: No Spurious eps-Branch
+% ============================================================================
+\section{Regularization Audit: No Spurious $\varepsilon$-Branch}
+\label{app:regularization}
+
+The smooth barrier $V/(V+\varepsilon)$ in \eqref{eq:drain} is a
+positive-invariance device (Appendix~\ref{app:invariance}). A careful
+reviewer may worry that it \emph{creates} equilibria: specifically, a
+spurious branch at small positive vitality,
+$V\approx R\varepsilon/(\delta O^{\gamma})$, with no counterpart in the
+$\varepsilon\to0$ limit. This appendix shows the concern is groundless at
+baseline---and, more usefully, makes the ``no spurious branch'' claim
+executable, via \texttt{dlvt.analysis.find\_regularization\_branch}, so
+that any future parameter change reintroducing such a branch is caught by
+the test suite.
+
+\subsection{Axis equilibria: exactly one positive root}
+
+On the invariant axis $\{C=0\}$ (where $\dot C\equiv0$), equilibria of the
+vitality equation solve the quadratic \eqref{eq:vqe-quadratic} at $O=O_0$:
+\[
+\frac{R}{\Vmax}V^{2}
+-\Bigl(R-\frac{R\varepsilon}{\Vmax}-\delta O_0^{\gamma}\Bigr)V
+-R\varepsilon=0 .
+\]
+The product of its roots is $-\varepsilon\Vmax<0$ for any $\varepsilon>0$
+($=-1$ at baseline), so the quadratic has exactly \emph{one} positive
+root---there is no second, near-zero axis equilibrium to begin with. At
+baseline the positive root is $V\approx9.934$: the axis equilibrium sits
+near the \emph{ceiling}, not near zero (the naive approximation
+$R\varepsilon/(\delta O_0^{\gamma})=15$ exceeds $\Vmax$ and is invalid at
+low load; see \S\ref{sec:transient}).
+
+\subsection{The axis equilibrium is a saddle}
+
+At $(V,C)=(9.934,\,0)$ the Jacobian is upper triangular, since
+$J_{CV}=\alpha C/(1+\varphi O)=0$ at $C=0$. Its eigenvalues are the
+diagonal entries
+\[
+\lambda_1=J_{VV}=-0.300
+\quad(\text{vitality relaxation along the axis}),\qquad
+\lambda_2=J_{CC}=\frac{\alpha V}{1+\varphi O_0}-\mu=+0.664 ,
+\]
+of opposite sign: a \emph{saddle}. The stable eigenvector $(1,0)$ spans the
+axis, so the saddle's stable manifold is contained in $\{C=0\}$; its
+unstable direction points into $\{C>0\}$. Consequently the axis equilibrium
+attracts no interior trajectory---the fact required by the
+global-stability proof (Appendix~\ref{app:gas}) and pinned by
+\texttt{test\_regularization\_branch\_axis\_equilibrium\_is\_saddle}.
+
+\subsection{Interior branch: bounded away from zero}
+
+Interior equilibria lie on the capital nullcline \eqref{eq:cnullcline},
+hence satisfy the a priori bound
+\[
+V^{*} \;=\; \frac{\mu}{\alpha}\bigl(1+\varphi O^{*}\bigr)
+\;\ge\;\frac{\mu}{\alpha} \;=\;2.0
+\quad\text{at baseline},
+\]
+independent of $\varepsilon$, $\beta$, $\delta$, and $\gamma$. No interior
+equilibrium can approach the vitality floor, so no interior
+$\varepsilon$-branch exists either. Enumerating all equilibria at baseline
+therefore yields exactly two: the interior low-vitality equilibrium
+$(4.7025,\,32.0337)$ (stable spiral) and the axis saddle $(9.934,\,0)$
+---and nothing below the near-zero threshold
+$\min(\mu/\alpha,1)=1.0$
+(\texttt{test\_regularization\_branch\_no\_near\_zero\_at\_baseline}).
+
+\subsection{Summary}
+
+The regularization displaces equilibrium quantities by less than $1\%$ at
+$\varepsilon=0.1$ (quantified in Appendix~\ref{app:epsilon}) and creates no
+equilibria: the product-of-roots argument caps the axis at one positive
+root for \emph{any} $\varepsilon>0$, and the nullcline bound keeps the
+interior branch above $\mu/\alpha$. The audit is defensive infrastructure,
+not a live concern.

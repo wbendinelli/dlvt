@@ -1,0 +1,84 @@
+% ============================================================================
+% Appendix A5 — Jacobian Entries, Eigenvalues, and Local Stability
+% ============================================================================
+\section{Jacobian Entries, Eigenvalues, and Local Stability}
+\label{app:jacobian}
+
+Write the system \eqref{eq:dVdt}--\eqref{eq:dCdt} as
+$\dot V=F(V,C)$, $\dot C=G(V,C)$ with $O=O(C)$ from \eqref{eq:complexity}
+and $O'(C)=\beta\eta C^{\eta-1}$.
+
+\subsection{Entries}
+
+Direct differentiation gives, at any point $(V,C)$ with $C>0$:
+\begin{align*}
+J_{VV} &= \frac{\partial F}{\partial V}
+        = -\frac{R}{\Vmax}
+          \;-\;\frac{\delta\,O^{\gamma}\,\varepsilon}{(V+\varepsilon)^{2}}
+        \;<\;0 ,\\[2pt]
+J_{VC} &= \frac{\partial F}{\partial C}
+        = -\,\delta\gamma\,O^{\gamma-1}O'(C)\,\frac{V}{V+\varepsilon}
+        \;<\;0 \quad (V>0),\\[2pt]
+J_{CV} &= \frac{\partial G}{\partial V}
+        = \frac{\alpha C}{1+\varphi O}
+        \;>\;0 ,\\[2pt]
+J_{CC} &= \frac{\partial G}{\partial C}
+        = \frac{\alpha V}{1+\varphi O}
+          \;-\;\frac{\alpha C V\varphi\,O'(C)}{(1+\varphi O)^{2}}
+          \;-\;\mu .
+\end{align*}
+These are exactly the expressions implemented in
+\texttt{dlvt.analysis.jacobian\_eigenvalues}.
+
+\subsection{Simplification at an interior equilibrium}
+
+At an interior equilibrium, $\dot C=0$ with $C^{*}>0$ forces
+$\alpha V^{*}/(1+\varphi O^{*})=\mu$, so the first and last terms of
+$J_{CC}$ cancel identically and
+\[
+J_{CC}\big|_{*}
+= -\,\frac{\alpha C^{*}V^{*}\varphi\,O'(C^{*})}{(1+\varphi O^{*})^{2}}
+\;<\;0 .
+\]
+Together with $J_{VV}<0$ this proves $\operatorname{tr}J<0$ at
+\emph{every} interior equilibrium for \emph{all} positive parameters
+(Lemma~\ref{lem:trace}); since additionally $J_{VC}<0<J_{CV}$,
+\[
+\det J = J_{VV}J_{CC}-J_{VC}J_{CV}
+       = \underbrace{J_{VV}J_{CC}}_{>0}
+         \;+\;\underbrace{(-J_{VC})\,J_{CV}}_{>0} \;>\;0 .
+\]
+Trace negative and determinant positive give local asymptotic stability
+unconditionally; trace bounded away from zero rules out Hopf bifurcations
+throughout parameter space, and determinant bounded away from zero rules
+out saddle-node (fold) bifurcations of interior equilibria---the algebraic
+heart of Proposition~\ref{prop:carrying}'s ``flux threshold, not
+bifurcation'' correction. Both signs are consistent with the global Dulac
+certificate $B=1/C$ (Appendix~\ref{app:gas}), which integrates the same
+negativity over the trapping region.
+
+\subsection{Baseline numerics}
+
+At the baseline equilibrium
+$(V^{*},C^{*},O^{*})=(4.70253,\,32.0337,\,9.00843)$, $\varepsilon=0.1$:
+\[
+J=
+\begin{pmatrix}
+-0.30704 & -0.08821\\
+\phantom{-}1.36240 & -0.10218
+\end{pmatrix},
+\qquad
+\operatorname{tr}J=-0.40922,\qquad
+\det J=0.15155 .
+\]
+The discriminant $(\operatorname{tr}J)^{2}-4\det J=-0.4388<0$, so the
+eigenvalues are the complex pair
+\[
+\lambda_{1,2} \;=\; -0.205\pm0.331\,i ,
+\]
+a \emph{damped spiral}: amplitude e-folding time
+$1/0.205\approx4.9$ time units and rotation period
+$2\pi/0.331\approx19.0$ time units, matching the overshoot-and-return
+signature of Figure~\ref{fig:temporal}. The companion test
+\texttt{test\_baseline\_equilibrium\_is\_zombie\_and\_stable} pins the
+negative real parts and the nonzero imaginary parts of this pair.

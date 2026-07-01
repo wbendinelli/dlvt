@@ -1,0 +1,87 @@
+% ============================================================================
+% Appendix A4 — Equilibrium Algebra and the eps -> 0 Closed Form
+% ============================================================================
+\section{Equilibrium Algebra and the $\varepsilon\to0$ Closed Form}
+\label{app:equilibrium}
+
+This appendix collects the algebra behind Theorem~\ref{thm:uniqueness} and
+Corollary~\ref{cor:scope}: the reduction of the equilibrium problem to a
+scalar root-finding problem, the exact quadratic in the
+$\varepsilon\to0$ limit, and the baseline numerics at both $\varepsilon=0.1$
+and $\varepsilon\to0$.
+
+\subsection{Reduction along the capital nullcline}
+
+Interior equilibria require $\dot C=0$ with $C>0$. Factoring
+\eqref{eq:dCdt} as $\dot C=C\bigl(\alpha V/(1+\varphi O)-\mu\bigr)$ yields
+the capital nullcline \eqref{eq:cnullcline},
+$V_c(O)=(\mu/\alpha)(1+\varphi O)$. Substituting into $\dot V=0$ gives the
+scalar residual $\Phi(O)$ of \eqref{eq:phi-residual}, strictly decreasing by
+Theorem~\ref{thm:uniqueness}. Two structural bounds follow immediately.
+
+\begin{itemize}
+\item \emph{Interior lower bound.} Since $O\ge O_0>0$,
+$V^{*}=V_c(O^{*})\ge(\mu/\alpha)(1+\varphi O_0)>\mu/\alpha$. At baseline
+$V^{*}\ge\mu/\alpha=2$: no interior equilibrium can sit near the vitality
+floor, regardless of $\beta$, $\delta$, or $\gamma$. This bound is the
+backbone of the regularization audit (Appendix~\ref{app:regularization}).
+\item \emph{Interior upper bound.} $V^{*}<\Vmax$ requires
+$O^{*}<\bigl(\alpha\Vmax/\mu-1\bigr)/\varphi$, i.e.\ $C^{*}<\Ctrap$ with
+$\Ctrap$ as in \eqref{eq:ctrap}: the interior equilibrium always lies
+strictly inside the trapping rectangle of Theorem~\ref{thm:gas}.
+\end{itemize}
+
+\subsection{The $\varepsilon\to0$ closed form}
+
+For $V>0$ fixed and $\varepsilon\to0$, the barrier $V/(V+\varepsilon)\to1$
+and $\dot V=0$ reduces to $R\bigl(1-V/\Vmax\bigr)=\delta O^{\gamma}$. With
+the baseline exponent $\gamma=2$ and $V=V_c(O)$, the equilibrium complexity
+solves the quadratic
+\begin{equation}
+\label{eq:eps0-quadratic}
+\delta\,O^{2}
+\;+\;\frac{R}{\Vmax}\,\frac{\mu\varphi}{\alpha}\,O
+\;+\;R\Bigl(\frac{\mu/\alpha}{\Vmax}-1\Bigr)
+\;=\;0 .
+\end{equation}
+The product of the roots is
+$\tfrac{R}{\delta}\bigl(\tfrac{\mu/\alpha}{\Vmax}-1\bigr)$, which is
+negative precisely when $\mu/\alpha<\Vmax$; in that regime
+\eqref{eq:eps0-quadratic} has exactly one positive root---an independent
+confirmation of uniqueness in the limit. At baseline the coefficients are
+$0.02\,O^{2}+0.09\,O-2.4=0$, whose positive root and induced equilibrium are
+\[
+O^{*} = 8.93313,\qquad
+V^{*} = \frac{\mu}{\alpha}\bigl(1+\varphi O^{*}\bigr) = 4.67994,\qquad
+C^{*} = \frac{O^{*}-O_0}{\beta} = 31.7325 ,
+\]
+with conserved product $\beta C^{*}=O^{*}-O_0=7.93313$
+(Corollary~\ref{cor:scope}).
+
+\subsection{Baseline numerics at $\varepsilon=0.1$}
+
+With the regularization retained, $\Phi(O)=0$ is solved numerically
+(Brent's method along the nullcline, as implemented in
+\texttt{dlvt.analysis.find\_interior\_equilibria}), giving
+\[
+O^{*}=9.00843,\qquad V^{*}=4.70253,\qquad C^{*}=32.0337,\qquad
+\beta C^{*}=8.00843 .
+\]
+The $\varepsilon$-shift of every equilibrium quantity is below $1\%$ at
+$\varepsilon=0.1$ and is tabulated against the closed form in
+Appendix~\ref{app:epsilon}. The companion tests pin both sets of values
+(\texttt{test\_regularization\_branch\_interior\_is\_unique\_zombie},
+\texttt{test\_bifurcation\_interval\_baseline\_beta\_C\_product\_is\_pinned}).
+
+\subsection{Existence condition and regime threshold}
+
+Existence of the interior equilibrium requires $\Phi(O_0)>0$
+(Theorem~\ref{thm:uniqueness}), i.e.\ recovery at the nullcline entry point
+must exceed baseline drain; a necessary ingredient is
+$V_c(O_0)<\Vmax$, i.e.\ $\mu/\alpha<\Vmax/(1+\varphi O_0)$ ($=8.70$ at
+baseline). Within the existence region, \eqref{eq:vstar} makes
+$V^{*}$ proportional to $\mu/\alpha$ at fixed $O^{*}$, and solving
+$V^{*}(\mu/\alpha)=\Vstrat$ numerically gives the flip value
+$\mu/\alpha=2.163$ at $\varepsilon=0.1$ ($2.175$ in the $\varepsilon\to0$
+closed form), against the baseline $\mu/\alpha=2.0$---the $8\%$ regime
+margin quoted in \S\ref{sec:calibration}.

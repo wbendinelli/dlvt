@@ -1,0 +1,75 @@
+% ============================================================================
+% Appendix A8 — Bifurcation-Interval Honesty: the Retracted beta_crit
+% ============================================================================
+\section{Bifurcation-Interval Honesty: the Retracted
+$\beta_{\mathrm{crit}}\approx0.1015$}
+\label{app:bifurcation}
+
+Earlier drafts reported a critical coupling
+$\beta_{\mathrm{crit}}\approx0.1015$ at which the equilibrium vitality
+$V^{*}(\beta)$ appeared to cross the strategic threshold $\Vstrat$,
+presented as a bifurcation of the baseline model. The claim was wrong
+twice over---once numerically and once structurally---and this appendix
+documents both failures and the corrected reporting protocol, because the
+failure mode (a scan-window artifact masquerading as a critical point) is
+generic enough to be worth recording.
+
+\subsection{The structural impossibility}
+
+By Corollary~\ref{cor:scope}, $V^{*}$ is invariant in $\beta$ on the
+interior branch: at baseline it is the constant $4.7025$
+($\varepsilon=0.1$) for \emph{every} $\beta$ in the structurally interior
+region. A $V^{*}(\beta)$ crossing of $\Vstrat=5$ therefore cannot exist at
+this calibration. Independently, Lemma~\ref{lem:trace} gives
+$\det J>0$ everywhere, so no fold in $\beta$ (or any other parameter)
+exists either. Whatever the legacy sweep detected, it was not a
+bifurcation.
+
+\subsection{The numerical forensics}
+
+The legacy equilibrium scan searched for nullcline crossings in the window
+$C\in[0.01,\,80]$. But the interior branch obeys
+\[
+C^{*}(\beta)\;=\;\frac{\beta C^{*}}{\beta}\;=\;\frac{8.008}{\beta}
+\qquad(\varepsilon=0.1),
+\]
+which exceeds the window ceiling $C_{\max}^{\mathrm{scan}}=80$ precisely
+when
+\[
+\beta \;<\; \frac{8.008}{80} \;=\; 0.1001 .
+\]
+For $\beta$ below this value the scan silently \emph{lost} the interior
+equilibrium; the interpolation across the last resolved grid points then
+manufactured an apparent threshold crossing at $\beta\approx0.1015$. The
+``critical coupling'' was the image of the scan window, not of the model:
+false precision produced by an implementation constant.
+
+\subsection{The corrected protocol}
+
+The companion function
+\texttt{dlvt.analysis.estimate\_bifurcation\_interval} replaces the point
+estimate with two honest questions: (i)~does a $V^{*}$-crossing of
+$\Vstrat$ exist anywhere in the sweep, once the scan window is made large
+enough ($C\le500$) to hold the low-$\beta$ branch? and (ii)~if a crossing
+exists (non-baseline calibrations), what is the \emph{interval} of
+numerical estimates across a grid of regularizations
+$\varepsilon\in\{0.01,0.05,0.1,0.2\}$ and scan resolutions---the
+methods-honest reporting granularity, in place of a four-significant-figure
+point. At baseline the answers are: no crossing exists;
+$V^{*}(\beta)$ is numerically constant at $4.7025$; and the conserved
+product is $\beta C^{*}=8.0083$ (all three pinned by the
+\texttt{test\_bifurcation\_interval\_*} group, whose diagnostic string is
+required to name the scan-window artifact explicitly so the legacy figure
+cannot be reproduced by accident).
+
+\subsection{Where real $\beta$-sensitivity lives}
+
+The retraction is scoped, not global. Outside the separable power-law
+family---exponential or Hill (saturating) load/drain kernels in which the
+coupling parameter also sets a saturation or curvature scale---the
+$\beta$-invariance of Corollary~\ref{cor:scope} fails,
+$\partial V^{*}/\partial\beta\neq0$, and genuine threshold crossings in
+$\beta$ can occur (Proposition~P4, \S\ref{sec:propositions}). Establishing
+the empirical kernel family is therefore a first-order measurement task,
+not a modeling nicety: it decides whether scope redesign has any
+equilibrium leverage at all.
