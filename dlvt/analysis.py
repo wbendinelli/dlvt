@@ -7,35 +7,84 @@ This module implements the analytical and numerical results from "Dynamic Leader
 Vitality Theory: A Formal Model of the Zombie-Leader Equilibrium" (W. Bendinelli, 2026),
 targeting *The Leadership Quarterly*. Includes Theorems 1–2, Lemma 2, and Propositions 1–3.
 
-Theoretical Foundations
------------------------
-THEOREM 1 (Existence): For any parameter vector (R, δ, γ, ...) in ℝ^11_>0, the DLVT system
-  possesses at least one interior fixed point (V*, C*) with V*, C* > 0.
+Theoretical Foundations (corrected statements, v2.1)
+----------------------------------------------------
+THEOREM 1 (Existence): Whenever αVmax/μ > 1 + φO₀, the DLVT system possesses an interior
+  fixed point (V*, C*) with V*, C* > 0. (When the inequality fails, the C-nullcline
+  V_c(C) = μ(1+φO)/α sits at or above Vmax for all C ≥ 0, dC/dt < 0 everywhere, and no
+  interior equilibrium exists.)
 
-THEOREM 2 (Global Asymptotic Stability): The unique interior zombie equilibrium is globally
-  asymptotically stable in the biologically plausible region. Proof uses a trapping rectangle,
-  Bendixson-Dulac certificate with B(V,C) = 1/C (ruling out closed orbits), and
-  Poincaré-Bendixson theorem. See Appendix A10 for the full proof.
+THEOREM 2a (Global Uniqueness): the interior equilibrium is unique in the ENTIRE positive
+  orthant, for ALL positive parameter vectors — not just the baseline. Proof: along the
+  C-nullcline V_c(O) = (μ/α)(1+φO), define
+      Φ(O) = R(1 − V_c/Vmax) − δ·O^γ·V_c/(V_c+ε).
+  Every term of dΦ/dO is strictly negative:
+      −(R/Vmax)·V_c′ < 0,
+      −δγO^{γ−1}·V_c/(V_c+ε) < 0,
+      −δO^γ·ε·V_c′/(V_c+ε)² < 0,
+  so Φ is strictly decreasing in O; since O(C) is strictly increasing, Φ has at most one
+  root in C. Hence: at most one interior equilibrium anywhere, and no fold/saddle-node
+  from root multiplicity is possible. See Appendix A10.
 
-LEMMA 2 (Scope Absorption): The equilibrium vitality V* is structurally invariant in β —
-  the coupling coefficient does not appear in V* at the interior equilibrium. This is a
-  derived property of models with power-law drain kernels, not a "surprise." Under
-  alternative kernels (exponential, Hill), the property fails. See §3.8 / §4.
+THEOREM 2b (No Hopf / no cycles): at any interior equilibrium, dC/dt = 0 forces
+  αV*/(1+φO*) = μ, hence
+      J[1,1] = −α·C*·V*·φ·(dO/dC)/(1+φO*)² < 0,
+  and J[0,0] < 0 identically, so trace(J) < 0 at EVERY interior equilibrium for all
+  positive parameters — no Hopf bifurcation exists anywhere in parameter space. This is
+  consistent with (and independent of) the Bendixson–Dulac certificate B(V,C) = 1/C, which
+  rules out closed orbits globally on {C > 0}. No elementary global Lyapunov function
+  exists for this system (weighted quadratics fail), so Dulac + Poincaré–Bendixson is the
+  appropriate proof route.
+
+THEOREM 2c (Global Asymptotic Stability): the unique interior equilibrium is globally
+  asymptotically stable on the OPEN set {C > 0} ∩ Ω. The line C = 0 is invariant and
+  carries a saddle equilibrium at (V ≈ 9.934, C = 0) (see find_regularization_branch), so
+  the closed quadrant is NOT the basin — trajectories started exactly on C = 0 converge to
+  the axis saddle instead. The trapping rectangle is
+      Ω = [0, Vmax] × [0, C_trap],  C_trap^η = ((αVmax/μ − 1)/φ − O₀)/β
+  (baseline C_trap = 102.67; see trapping_capital_bound). CAUTION: earlier drafts used the
+  carrying capacity C*_max = 44.99 as the rectangle ceiling; that rectangle LEAKS (at
+  C = 44.99, V = Vmax, dC/dt > 0) — C_trap and C*_max are distinct constants. Proof:
+  Dulac certificate (no closed orbits) + uniqueness (2a) + Poincaré–Bendixson on Ω∩{C>0}.
+  See Appendix A10.
+
+COROLLARY (Scope Absorption; formerly "Lemma 2"): under the separable power-law drain
+  kernel f(O)·g(V), the pair (V*, O*) solves a β-free system, so V* is invariant in β and
+  β·C*^η is conserved. This is a reparameterization invariance of the kernel family, NOT a
+  robust empirical law: under alternative kernels (exponential, Hill) the property fails.
+  Managerial reading (intervention asymmetry): scope/coupling reduction alone cannot raise
+  equilibrium vitality; recovery-side parameters (R↑, μ↓, α↑) can. ε-dependence of the
+  invariant: β·C* = 8.008 at ε = 0.1, and exactly 7.933 in the ε → 0 closed form (O* solves
+  δO² + (R/Vmax)(μφ/α)O + R((μ/α)/Vmax − 1) = 0 for γ=2, η=1). See §3.8 / §4.
 
 PROPOSITION 1 (V-Nullcline): The vitality recovery curve (dV/dt = 0) is strictly decreasing
-  in C. This ensures unique intersection with the C-nullcline under normal parameter ranges.
+  in C. Together with Theorem 2a this gives the unique intersection with the C-nullcline.
 
 PROPOSITION 2 (Bifurcation): Under non-power-law drain kernels, varying β can produce
-  saddle-node bifurcations. Under the baseline power-law kernel, Lemma 2 forces V* to be
-  invariant in β, so no classical V*-crossing bifurcation exists. See Appendix A8.
+  saddle-node bifurcations. Under the baseline power-law kernel, the Scope-Absorption
+  Corollary forces V* to be invariant in β, so no classical V*-crossing bifurcation exists.
+  See Appendix A8.
 
-PROPOSITION 3 (Carrying Capacity): The maximum sustainable career capital is given by
+PROPOSITION 3 (Carrying Capacity — a FLUX THRESHOLD, not a bifurcation): the maximum
+  sustainable career capital is
     C*_max = ( ((R/δ)^(1/γ) − O₀) / β )^(1/η)
-  This is the critical threshold beyond which sustainable equilibria cease to exist.
+  the capital level at which the depletion ratio Γ = δO^γ/R reaches 1 at FULL vitality
+  (V = Vmax). Since det J > 0 everywhere, no saddle-node/fold occurs anywhere: equilibria
+  do not "cease to exist" past C*_max. The constant separates the region where recovery at
+  full vitality can offset drain from the region where it cannot; it is NOT the trapping
+  ceiling (see trapping_capital_bound) and NOT a critical point of the flow.
+
+CALIBRATION CAVEAT (regime label): the interior equilibrium satisfies
+  V* = (μ/α)(1 + φO*), so whether it falls below the stipulated threshold 0.5·Vmax is
+  governed by the ratio μ/α. At baseline μ/α = 2.0 the flip value is (μ/α)_crit ≈ 2.163
+  (8% away); across a ±2× log-uniform parameter hypercube, P(zombie | stable eq) ≈ 0.49.
+  The baseline numbers (V* ≈ 4.70, C* ≈ 32.03) are ILLUSTRATIVE, not empirical estimates.
+  See dlvt.nondimensional for the effective-parameter analysis (~6 dimensionless groups).
 
 Key Functions
 -----------
-carrying_capacity()             : Proposition 3 — maximum sustainable capital C*_max
+carrying_capacity()             : Proposition 3 — flux threshold C*_max (not a bifurcation)
+trapping_capital_bound()        : Theorem 2c — trapping-rectangle ceiling C_trap
 find_interior_equilibria()      : Theorem 2 — find all (V*, C*) with V*, C* > 0
 jacobian_eigenvalues()          : Theorem 2 — compute eigenvalues, classify stability
 is_zombie()                     : Definition 7 — check if V* < V_strategic
@@ -64,19 +113,73 @@ from scipy.optimize import brentq
 from .model import complexity, impact, DEFAULT_PARAMS
 
 # Strategic vitality threshold (Definition in paper: V_strategic = 0.5 * V_max)
+# NOTE: this threshold is *stipulated*, not derived from data. At the baseline
+# calibration the equilibrium V* = 4.7025 sits only 5.9% below it; any threshold
+# fraction below 0.47 reclassifies the baseline as 'sustainable'. See §5.
 V_STRATEGIC_FRACTION = 0.5
 
 
 # ── Analytical results ────────────────────────────────────────────────────────
 
+def trapping_capital_bound(p: Dict[str, float]) -> float:
+    """Capital ceiling C_trap of the forward-invariant trapping rectangle.
+
+    C_trap is the unique capital level at which the C-nullcline
+    V_c(C) = μ·(1 + φ·O(C))/α reaches V_max:
+
+        C_trap^η = ( (α·V_max/μ − 1)/φ − O₀ ) / β
+
+    For any C > C_trap and any V ∈ [0, V_max],
+    dC/dt = C·(α·V/(1+φ·O) − μ) < 0, so the rectangle
+    Ω = [0, V_max] × [0, C_trap] is forward invariant (Theorem 2).
+
+    Two distinct constants — do not conflate them:
+
+    - ``C_trap`` (this function; baseline **102.67**) bounds the *trapping
+      rectangle* used in the global-stability proof. It also bounds every
+      interior equilibrium, since dC/dt = 0 with C* > 0 forces
+      V* = μ(1+φO*)/α < V_max ⟹ C* < C_trap.
+    - ``carrying_capacity`` (Proposition 3; baseline **44.99**) is the flux
+      threshold where the depletion ratio Γ = 1 at V = V_max. Earlier drafts
+      wrongly used it as the rectangle ceiling; that rectangle *leaks*
+      (at C = 44.99, V = V_max, dC/dt > 0 — a trajectory started at
+      (V, C) = (10, 40) overshoots to C ≈ 46.4 before settling).
+
+    Parameters
+    ----------
+    p : Dict[str, float]
+        Parameter dictionary.
+
+    Returns
+    -------
+    float
+        C_trap. Raises ValueError when α·V_max/μ ≤ 1 + φ·O₀, in which
+        case the C-nullcline never reaches V_max: dC/dt < 0 for all C > 0,
+        no interior equilibrium exists, and no trapping ceiling is needed.
+    """
+    rhs = (p['alpha'] * p['Vmax'] / p['mu'] - 1.0) / p['phi'] - p['O0']
+    if rhs <= 0:
+        raise ValueError(
+            "Parameter regime has αVmax/μ ≤ 1+φO0; the C-nullcline never "
+            "reaches Vmax, so no interior equilibrium exists and the "
+            "trapping ceiling is undefined (capital decays for all C > 0)."
+        )
+    return (rhs / p['beta']) ** (1.0 / p['eta'])
+
 def carrying_capacity(p: Dict[str, float]) -> float:
-    """Maximum sustainable career capital C*_max (Proposition 3).
+    """Maximum sustainable career capital C*_max (Proposition 3) — a flux threshold.
 
     C*_max is the value of C at which the depletion ratio Γ = δ·O^γ / R = 1
-    evaluated at full vitality (V = V_max), i.e., the tipping point beyond
-    which energy drain permanently exceeds recovery.
+    evaluated at full vitality (V = V_max): below it, recovery at full
+    vitality can offset the drain; above it, it cannot.
 
-    This is the critical boundary between sustainable and collapse-prone regimes.
+    IMPORTANT (corrected interpretation): C*_max is *not* a bifurcation
+    point. det J > 0 holds everywhere, so no saddle-node/fold exists
+    anywhere in parameter or state space — equilibria do not "cease to
+    exist" past C*_max (Theorem 2a guarantees a unique interior equilibrium
+    whenever αVmax/μ > 1+φO₀). C*_max is also *not* the ceiling of the
+    trapping rectangle used in the global-stability proof; that constant is
+    C_trap (see :func:`trapping_capital_bound`; baseline 102.67 vs 44.99).
 
     Formula (ε → 0 limit, η = 1):
       C*_max = ( (R/δ)^{1/γ} − O₀ ) / β
@@ -113,7 +216,7 @@ def carrying_capacity(p: Dict[str, float]) -> float:
     return max(0.0, ((Omax - p['O0']) / p['beta']) ** (1.0 / p['eta']))
 
 
-def find_interior_equilibria(p: Dict[str, float], C_max: float = 120.0,
+def find_interior_equilibria(p: Dict[str, float], C_max: Optional[float] = None,
                             n_scan: int = 8000
                             ) -> List[Dict[str, any]]:
     """Find all interior equilibria (V*, C*) with V*, C* > 0 (Theorem 2).
@@ -130,7 +233,17 @@ def find_interior_equilibria(p: Dict[str, float], C_max: float = 120.0,
     p : Dict[str, float]
         Parameter dictionary.
     C_max : float, optional
-        Upper bound for capital scan, default 120.0.
+        Upper bound for capital scan. Default ``None`` derives the bound
+        analytically: any interior equilibrium satisfies
+        V* = μ(1+φO*)/α < V_max, hence C* < C_trap
+        (see :func:`trapping_capital_bound`), so the scan uses
+        ``1.05 · C_trap``. This bound scales as 1/β, exactly like
+        C*(β) = (β·C*)/β itself, so no equilibrium can fall outside the
+        window at any β. A *fixed* default (120.0 in earlier releases)
+        silently missed the equilibrium for β < 0.066 — C*(β) ≈ 8.008/β
+        exceeds 120 there — causing :func:`classify_regime` to mislabel
+        those regimes as 'collapse-prone'. Pass an explicit value only if
+        you deliberately want a restricted window.
     n_scan : int, optional
         Number of scan points (more = fewer missed roots), default 8000.
 
@@ -149,9 +262,19 @@ def find_interior_equilibria(p: Dict[str, float], C_max: float = 120.0,
     Notes
     -----
     The algorithm performs a coarse scan over [0.01, C_max] and refines
-    at each sign change. This robustly finds multiple equilibria for
-    bistability/hysteresis regimes.
+    at each sign change. Uniqueness is guaranteed analytically (the
+    residual Φ is strictly decreasing along the C-nullcline — see the
+    module header, Theorem 2a), so at most one root exists; the scan is
+    retained as a defensive check that would surface any violation.
     """
+    if C_max is None:
+        try:
+            C_max = 1.05 * trapping_capital_bound(p)
+        except ValueError:
+            # αVmax/μ ≤ 1+φO0: the C-nullcline sits at/above Vmax for all
+            # C ≥ 0, so dC/dt < 0 everywhere and no interior equilibrium
+            # exists. Return the empty list directly.
+            return []
     def V_from_C(Cs):
         """V* from dC/dt = 0: α·I* = μ·C*  ⟹  V* = μ·(1 + φ·O) / α"""
         Os = p['O0'] + p['beta'] * Cs**p['eta']
@@ -280,7 +403,7 @@ def is_zombie(V_star: float, p: Dict[str, float]) -> bool:
 
 # ── Regime map ────────────────────────────────────────────────────────────────
 
-def classify_regime(p: Dict[str, float], C_max: float = 300.0) -> str:
+def classify_regime(p: Dict[str, float], C_max: Optional[float] = None) -> str:
     """Classify a parameter combination into a leadership regime.
 
     Determines whether a set of parameter values leads to sustainable,
@@ -291,7 +414,10 @@ def classify_regime(p: Dict[str, float], C_max: float = 300.0) -> str:
     p : Dict[str, float]
         Parameter dictionary.
     C_max : float, optional
-        Maximum capital for equilibrium search, default 300.0.
+        Maximum capital for equilibrium search. Default ``None`` uses the
+        analytical bound (see :func:`find_interior_equilibria`), which is
+        valid for every β. Fixed values silently mislabel small-β regimes
+        as 'collapse-prone' when C*(β) ∝ 1/β exceeds the window.
 
     Returns
     -------
@@ -378,7 +504,7 @@ def estimate_bifurcation_interval(
     beta_range: Tuple[float, float] = (0.005, 2.0),
     n_beta: int = 400,
     V_strategic: Optional[float] = None,
-    C_max: float = 500.0,
+    C_max: Optional[float] = None,
 ) -> Dict[str, any]:
     """Estimate the critical-beta interval, exposing regularization sensitivity.
 
@@ -420,9 +546,11 @@ def estimate_bifurcation_interval(
     V_strategic : float, optional
         Strategic threshold. Defaults to ``V_STRATEGIC_FRACTION * Vmax``.
     C_max : float, optional
-        Upper bound for the equilibrium scan. Default: ``500.0`` (large
-        enough to catch low-β equilibria that the legacy C_max=80 missed,
-        which was the source of the original 0.1015 artifact).
+        Upper bound for the equilibrium scan. Default ``None`` uses the
+        per-β analytical bound C_trap ∝ 1/β (see
+        :func:`find_interior_equilibria`), which catches the low-β
+        equilibria that the legacy fixed C_max=80 missed — the source of
+        the original 0.1015 artifact.
 
     Returns
     -------
@@ -718,8 +846,7 @@ def find_regularization_branch(
         )
 
     # -- 2. Interior equilibria ------------------------------------------------
-    C_max_search = max(300.0, 5.0 * carrying_capacity(p))
-    interior = find_interior_equilibria(p, C_max=C_max_search, n_scan=12000)
+    interior = find_interior_equilibria(p, n_scan=12000)
 
     # -- 3. Near-zero filter ---------------------------------------------------
     candidates: List[Dict[str, any]] = []
@@ -834,13 +961,7 @@ def bendixson_dulac_certificate(
     """
     # Analytical C_trap from the α V/(1+φO) = μ threshold at V = Vmax.
     # With general η: C_trap^η · β = (αVmax/μ - 1)/φ - O0.
-    rhs = (p['alpha'] * p['Vmax'] / p['mu'] - 1.0) / p['phi'] - p['O0']
-    if rhs <= 0:
-        raise ValueError(
-            "Parameter regime has αVmax/μ ≤ 1+φO0; trapping rectangle "
-            "is undefined. (This corresponds to a collapse-prone regime.)"
-        )
-    c_trap = (rhs / p['beta']) ** (1.0 / p['eta'])
+    c_trap = trapping_capital_bound(p)
 
     C_hi = C_trap_safety * c_trap
     # Skip V=0 and C=0 edges — the Dulac function has a removable singularity
@@ -936,9 +1057,7 @@ def basin_of_attraction_sweep(
     from scipy.integrate import solve_ivp
     from .model import dlvt_system
 
-    interior = find_interior_equilibria(
-        p, C_max=max(300.0, 5.0 * carrying_capacity(p)), n_scan=12000
-    )
+    interior = find_interior_equilibria(p, n_scan=12000)
     if not interior:
         raise ValueError("No interior equilibria found; basin sweep not applicable.")
     eq = interior[0]

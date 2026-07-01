@@ -86,7 +86,7 @@ FIGURES
 
 Module Version
 --------------
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 __author__  = "W. Bendinelli"
 """
 
@@ -95,17 +95,17 @@ from .model import (
     dlvt_system, dlvt_exogenous, simulate
 )
 from .analysis import (
-    carrying_capacity, find_interior_equilibria, jacobian_eigenvalues,
-    is_zombie, classify_regime, regime_map
+    carrying_capacity, trapping_capital_bound, find_interior_equilibria,
+    jacobian_eigenvalues, is_zombie, classify_regime, regime_map
 )
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 __author__ = "W. Bendinelli"
 __all__ = [
     # Model
     'DEFAULT_PARAMS', 'make_params', 'complexity', 'impact',
     'dlvt_system', 'dlvt_exogenous', 'simulate',
     # Analysis
-    'carrying_capacity', 'find_interior_equilibria', 'jacobian_eigenvalues',
-    'is_zombie', 'classify_regime', 'regime_map',
+    'carrying_capacity', 'trapping_capital_bound', 'find_interior_equilibria',
+    'jacobian_eigenvalues', 'is_zombie', 'classify_regime', 'regime_map',
 ]

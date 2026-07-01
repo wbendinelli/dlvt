@@ -1,16 +1,52 @@
 #!/usr/bin/env python3
 """
-DLVT — Bifurcation Analysis with Hysteresis (R1.5)
-Scans β parameter, finds equilibria, classifies stability, detects hysteresis.
+DLVT — Figure 8: The scan-window artifact and scope absorption (Appendix A8).
+
+HISTORY / PURPOSE. Earlier drafts of this script re-implemented the model,
+scanned β with a *fixed* equilibrium-search window (C_max = 80), and reported
+a "critical coupling" β_crit ≈ 0.1015 with an apparent hysteresis loop. Both
+findings were artifacts of the fixed window: the equilibrium capital scales as
+C*(β) = (β·C*)/β ≈ 8.008/β, so for β < 8.008/80 ≈ 0.10 the (perfectly
+existing) equilibrium simply fell outside the scan window and the sweep
+mislabeled the regime. There is no V*-crossing bifurcation and no hysteresis
+in β at the baseline calibration: V*(β) is constant (scope absorption), and
+det J > 0 everywhere rules out folds.
+
+This script now *illustrates the artifact honestly* instead of reproducing it
+as a finding:
+
+  Panel (a): the legacy sweep with the fixed C_max = 80 window — the stable
+             branch appears to terminate near β ≈ 0.10 ("β_crit"), which is
+             exactly where C*(β) crosses the window edge (dotted curve).
+  Panel (b): the corrected sweep with the analytical per-β window
+             (C_max derived from C_trap ∝ 1/β): V*(β) is flat at 4.7025 for
+             every β — the scope-absorption invariance, with β·C* conserved.
+
+All model math is imported from the `dlvt` package; nothing is re-implemented
+here. See `dlvt.analysis.estimate_bifurcation_interval` for the programmatic
+version of this diagnostic, and Appendix A8 of the manuscript.
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
-from scipy.integrate import solve_ivp
-from scipy.optimize import brentq
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+
+REPO_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_DIR))
+
+from dlvt.model import make_params                      # noqa: E402
+from dlvt.analysis import (                              # noqa: E402
+    V_STRATEGIC_FRACTION,
+    estimate_bifurcation_interval,
+    find_interior_equilibria,
+)
+
+OUTPUT_DIR = REPO_DIR / 'figures'
 
 rcParams.update({
     'font.size': 11, 'axes.labelsize': 13, 'axes.titlesize': 13,
@@ -19,309 +55,110 @@ rcParams.update({
     'figure.dpi': 300, 'savefig.dpi': 300, 'savefig.bbox': 'tight',
 })
 
-DEFAULT_PARAMS = dict(
-    R=3.0, Vmax=10.0, delta=0.02, gamma=2.0,
-    O0=1.0, beta=0.25, eta=1.0,
-    alpha=0.1, phi=0.15, mu=0.2,
-    eps=0.1,
-)
+LEGACY_C_MAX = 80.0  # the fixed window that produced the 0.1015 artifact
 
-# ══════════════════════════════════════════════════════════════════════════
-# CORE FUNCTIONS
-# ══════════════════════════════════════════════════════════════════════════
 
-def complexity(C, p):
-    return p['O0'] + p['beta'] * np.power(np.maximum(C, 0), p['eta'])
+def sweep_v_star(betas, C_max=None):
+    """Stable-branch V*(β) and C*(β) using find_interior_equilibria.
 
-def impact(V, C, O, p):
-    return C * V / (1.0 + p['phi'] * O)
-
-def dlvt_system(t, y, p):
-    V, C = max(y[0], 0.0), max(y[1], 0.0)
-    O = complexity(C, p)
-    recovery = p['R'] * (1.0 - V / p['Vmax'])
-    drain = p['delta'] * O**p['gamma'] * V / (V + p['eps'])
-    I = impact(V, C, O, p)
-    dVdt = recovery - drain
-    dCdt = p['alpha'] * I - p['mu'] * C
-    return [dVdt, dCdt]
-
-def simulate(p, V0=8.0, C0=0.5, T=80.0, ms=0.05):
-    sol = solve_ivp(dlvt_system, [0, T], [V0, C0], args=(p,),
-                    method='RK45', max_step=ms, dense_output=True)
-    t = sol.t; V = np.maximum(sol.y[0], 0); C = np.maximum(sol.y[1], 0)
-    O = complexity(C, p); I = impact(V, C, O, p)
-    return t, V, C, O, I
-
-def find_interior_equilibria(p, C_max=80.0):
-    """Find all interior equilibria (V*, C*)."""
-    def V_from_C(Cs):
-        Os = p['O0'] + p['beta'] * Cs**p['eta']
-        return p['mu'] * (1.0 + p['phi'] * Os) / p['alpha']
-
-    def residual(Cs):
-        if Cs <= 0: return 1e10
-        Vs = V_from_C(Cs)
-        if Vs <= 0 or Vs >= p['Vmax']: return 1e10
-        Os = p['O0'] + p['beta'] * Cs**p['eta']
-        rec = p['R'] * (1.0 - Vs / p['Vmax'])
-        drn = p['delta'] * Os**p['gamma'] * Vs / (Vs + p['eps'])
-        return rec - drn
-
-    C_scan = np.linspace(0.01, C_max, 8000)
-    res = np.array([residual(c) for c in C_scan])
-    eqs = []
-    for i in range(len(res) - 1):
-        if res[i] * res[i+1] < 0:
-            try:
-                Cs = brentq(residual, C_scan[i], C_scan[i+1])
-                Vs = V_from_C(Cs); Os = complexity(Cs, p)
-                if 0 < Vs < p['Vmax'] and Cs > 0:
-                    eqs.append(dict(C=Cs, V=Vs, O=Os, I=impact(Vs, Cs, Os, p)))
-            except:
-                pass
-    return eqs
-
-def jacobian_eigenvalues(V, C, p):
-    """Compute eigenvalues and stability."""
-    O = complexity(C, p); eps = p['eps']
-    dOdC = p['beta'] * p['eta'] * max(C, 1e-10)**(p['eta']-1)
-    J = np.array([
-        [-p['R']/p['Vmax'] - p['delta']*O**p['gamma']*eps/(V+eps)**2,
-         -p['delta']*p['gamma']*O**(p['gamma']-1)*dOdC*V/(V+eps)],
-        [p['alpha']*C/(1+p['phi']*O),
-         p['alpha']*V/(1+p['phi']*O) - p['alpha']*C*V*p['phi']*dOdC/(1+p['phi']*O)**2 - p['mu']]
-    ])
-    eigvals = np.linalg.eigvals(J)
-    stable = all(e.real < 0 for e in eigvals)
-    return eigvals, 'stable' if stable else 'unstable'
-
-# ══════════════════════════════════════════════════════════════════════════
-# BIFURCATION ANALYSIS
-# ══════════════════════════════════════════════════════════════════════════
-
-def bifurcation_scan(beta_min=0.02, beta_max=1.5, n_points=1000):
-    """Scan β parameter and find all equilibria with stability classification."""
-    betas = np.linspace(beta_min, beta_max, n_points)
-
-    stable_branch = {'beta': [], 'V': [], 'C': []}
-    unstable_branch = {'beta': [], 'V': [], 'C': []}
-
-    print(f"[Bifurcation] Scanning β from {beta_min} to {beta_max} ({n_points} points)...")
-
-    for i, b in enumerate(betas):
-        if (i+1) % 100 == 0:
-            print(f"  {i+1}/{n_points}...")
-
-        p = {**DEFAULT_PARAMS, 'beta': b}
-        eqs = find_interior_equilibria(p)
-
-        for eq in eqs:
-            eigv, stab = jacobian_eigenvalues(eq['V'], eq['C'], p)
-            if stab == 'stable':
-                stable_branch['beta'].append(b)
-                stable_branch['V'].append(eq['V'])
-                stable_branch['C'].append(eq['C'])
-            else:
-                unstable_branch['beta'].append(b)
-                unstable_branch['V'].append(eq['V'])
-                unstable_branch['C'].append(eq['C'])
-
-    return betas, stable_branch, unstable_branch
-
-def find_critical_beta(V_strategic=5.0):
-    """Find β_crit where V* crosses V_strategic."""
-    betas = np.linspace(0.02, 1.5, 1000)
-
+    C_max=None uses the corrected analytical per-β window; a fixed float
+    reproduces the legacy (artifact-generating) behaviour.
+    """
+    out = []
     for b in betas:
-        p = {**DEFAULT_PARAMS, 'beta': b}
-        eqs = find_interior_equilibria(p)
+        p = make_params(beta=b)
+        eqs = find_interior_equilibria(p, C_max=C_max)
+        stable = [e for e in eqs if e['stable']]
+        if stable:
+            stable.sort(key=lambda e: e['C'])
+            out.append((b, stable[-1]['V'], stable[-1]['C']))
+    return np.array(out) if out else np.empty((0, 3))
 
-        for eq in eqs:
-            eigv, stab = jacobian_eigenvalues(eq['V'], eq['C'], p)
-            if stab == 'stable' and eq['V'] < V_strategic:
-                return b
 
-    return None
+def fig8_scan_window_artifact():
+    p = make_params()
+    V_strategic = V_STRATEGIC_FRACTION * p['Vmax']
+    betas = np.linspace(0.02, 1.5, 400)
 
-def detect_hysteresis():
-    """
-    Detect hysteresis by comparing forward and backward sweeps.
-    Forward: start sustainable, gradually increase β until jump to zombie.
-    Backward: start zombie, gradually decrease β until jump back to sustainable.
-    """
+    legacy = sweep_v_star(betas, C_max=LEGACY_C_MAX)
+    correct = sweep_v_star(betas, C_max=None)
 
-    print("[Hysteresis] Detecting hysteresis via forward-backward sweep...")
+    # Programmatic diagnostic (small grid; the full grid is in Appendix A8).
+    diag = estimate_bifurcation_interval(
+        p, eps_grid=[0.1], n_scan_grid=[8000], n_beta=80,
+    )
 
-    # Forward sweep: β increasing
-    print("  Forward sweep (β increasing from low to high)...")
-    betas_fwd = np.linspace(0.02, 1.5, 500)
-    beta_forward_jump = None
-    prev_state = 'sustainable'
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.5), sharey=True)
 
-    for b in betas_fwd:
-        p = {**DEFAULT_PARAMS, 'beta': b}
-        eqs = find_interior_equilibria(p)
+    # ── Panel (a): the artifact ────────────────────────────────────────────
+    if legacy.size:
+        ax1.plot(legacy[:, 0], legacy[:, 1], 'g-', lw=2.5,
+                 label='Stable branch found (fixed $C_{max}=80$ window)')
+        beta_edge = legacy[:, 0].min()
+        ax1.axvline(beta_edge, color='purple', ls=':', lw=2, alpha=0.7,
+                    label=f'apparent "$\\beta_{{crit}}$" ≈ {beta_edge:.3f} (artifact)')
+    ax1.axhline(V_strategic, color='orange', ls='-.', alpha=0.6, lw=1.5,
+                label=f'$V_{{strategic}}$ = {V_strategic:.1f}')
+    # Where the equilibrium leaves the fixed window: C*(β)=bC*/β crosses 80.
+    bC = diag['baseline_beta_C_product'] or 8.008
+    ax1.axvspan(0.02, bC / LEGACY_C_MAX, alpha=0.12, color='red',
+                label=f'equilibrium outside window ($C^*>{LEGACY_C_MAX:.0f}$)')
+    ax1.set_title('(a) Legacy fixed scan window:\napparent branch termination is an artifact')
+    ax1.set_xlabel(r'Capital–complexity coupling $\beta$')
+    ax1.set_ylabel(r'Equilibrium vitality $V^*$')
+    ax1.set_xlim(0.0, 1.5)
+    ax1.set_ylim(0, 10.5)
+    ax1.grid(True, alpha=0.3, linestyle=':', linewidth=0.5)
+    ax1.legend(loc='upper right', framealpha=0.95)
 
-        # Check if system jumps from sustainable (V* > 5) to zombie (V* < 5)
-        has_sustainable = False
-        has_zombie = False
+    # ── Panel (b): the corrected sweep ─────────────────────────────────────
+    if correct.size:
+        ax2.plot(correct[:, 0], correct[:, 1], 'g-', lw=2.5,
+                 label=r'Stable branch, analytical per-$\beta$ window')
+        v_inv = float(np.median(correct[:, 1]))
+        ax2.annotate(
+            f'scope absorption: $V^*(\\beta) \\equiv {v_inv:.4f}$\n'
+            f'$\\beta \\cdot C^* = {bC:.3f}$ conserved (ε = 0.1)',
+            xy=(0.75, v_inv), xytext=(0.55, 7.6),
+            arrowprops=dict(arrowstyle='->', alpha=0.6), fontsize=10,
+            bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8),
+        )
+    ax2.axhline(V_strategic, color='orange', ls='-.', alpha=0.6, lw=1.5,
+                label=f'$V_{{strategic}}$ = {V_strategic:.1f}')
+    ax2.set_title('(b) Corrected window:\nno crossing, no hysteresis — $V^*(\\beta)$ is flat')
+    ax2.set_xlabel(r'Capital–complexity coupling $\beta$')
+    ax2.set_xlim(0.0, 1.5)
+    ax2.grid(True, alpha=0.3, linestyle=':', linewidth=0.5)
+    ax2.legend(loc='upper right', framealpha=0.95)
 
-        for eq in eqs:
-            eigv, stab = jacobian_eigenvalues(eq['V'], eq['C'], p)
-            if stab == 'stable':
-                if eq['V'] >= 5.0:
-                    has_sustainable = True
-                if eq['V'] < 5.0:
-                    has_zombie = True
-
-        # Detect jump in forward direction
-        if prev_state == 'sustainable' and has_zombie and not has_sustainable:
-            beta_forward_jump = b
-            print(f"    → Forward jump detected at β_fwd ≈ {b:.4f}")
-            prev_state = 'zombie'
-        elif has_sustainable:
-            prev_state = 'sustainable'
-        elif has_zombie:
-            prev_state = 'zombie'
-
-    # Backward sweep: β decreasing
-    print("  Backward sweep (β decreasing from high to low)...")
-    betas_bwd = np.linspace(1.5, 0.02, 500)
-    beta_backward_jump = None
-    prev_state = 'zombie'
-
-    for b in betas_bwd:
-        p = {**DEFAULT_PARAMS, 'beta': b}
-        eqs = find_interior_equilibria(p)
-
-        has_sustainable = False
-        has_zombie = False
-
-        for eq in eqs:
-            eigv, stab = jacobian_eigenvalues(eq['V'], eq['C'], p)
-            if stab == 'stable':
-                if eq['V'] >= 5.0:
-                    has_sustainable = True
-                if eq['V'] < 5.0:
-                    has_zombie = True
-
-        # Detect jump in backward direction
-        if prev_state == 'zombie' and has_sustainable and not has_zombie:
-            beta_backward_jump = b
-            print(f"    → Backward jump detected at β_bwd ≈ {b:.4f}")
-            prev_state = 'sustainable'
-        elif has_zombie:
-            prev_state = 'zombie'
-        elif has_sustainable:
-            prev_state = 'sustainable'
-
-    hysteresis_width = None
-    if beta_forward_jump is not None and beta_backward_jump is not None:
-        hysteresis_width = beta_forward_jump - beta_backward_jump
-        if hysteresis_width > 0:
-            print(f"  ✓ Hysteresis detected: h = {hysteresis_width:.4f}")
-        else:
-            print(f"  Note: Forward jump at {beta_forward_jump:.4f}, backward at {beta_backward_jump:.4f}")
-    else:
-        print(f"  Note: Incomplete hysteresis loop detected (fwd={beta_forward_jump}, bwd={beta_backward_jump})")
-
-    return beta_forward_jump, beta_backward_jump, hysteresis_width
-
-# ══════════════════════════════════════════════════════════════════════════
-# FIGURE GENERATION
-# ══════════════════════════════════════════════════════════════════════════
-
-def fig8_bifurcation_hysteresis():
-    """Generate bifurcation diagram with hysteresis."""
-
-    # Perform bifurcation scan
-    betas, stable, unstable = bifurcation_scan(beta_min=0.02, beta_max=1.5, n_points=1000)
-
-    # Find critical beta and hysteresis
-    beta_crit = find_critical_beta(V_strategic=5.0)
-    beta_fwd, beta_bwd, h_width = detect_hysteresis()
-
-    # Create figure
-    fig, ax = plt.subplots(figsize=(12, 8))
-
-    # Plot stable branch (solid)
-    if stable['V']:
-        ax.plot(stable['beta'], stable['V'], 'g-', lw=2.5, label='Stable equilibrium (V*)', zorder=5)
-
-    # Plot unstable branch (dashed)
-    if unstable['V']:
-        ax.plot(unstable['beta'], unstable['V'], 'r--', lw=2, label='Unstable equilibrium (V*)', zorder=4)
-
-    # Mark critical beta
-    if beta_crit is not None:
-        ax.axvline(beta_crit, color='purple', ls=':', lw=2, alpha=0.6, label=f'β_crit ≈ {beta_crit:.3f}')
-        ax.plot([beta_crit]*2, [0, 10.5], 'purple', ls=':', lw=1, alpha=0.3)
-
-    # Strategic threshold
-    V_strategic = 5.0
-    ax.axhline(V_strategic, color='orange', ls='-.', alpha=0.5, lw=1.5,
-               label=f'V_strategic = {V_strategic}')
-
-    # Hysteresis loop annotation
-    if beta_fwd is not None and beta_bwd is not None:
-        ax.axvline(beta_fwd, color='darkred', ls='--', lw=1.5, alpha=0.4)
-        ax.axvline(beta_bwd, color='darkblue', ls='--', lw=1.5, alpha=0.4)
-
-        # Add hysteresis region
-        ax.axvspan(beta_bwd, beta_fwd, alpha=0.1, color='yellow', label='Hysteresis region')
-
-        # Annotate hysteresis width
-        mid_beta = (beta_fwd + beta_bwd) / 2
-        ax.text(mid_beta, 1.0, f'h={h_width:.4f}', fontsize=11, ha='center',
-               bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.7))
-
-    # Labeling
-    ax.set_xlabel(r'Capital-Complexity Coupling $\beta$', fontsize=13)
-    ax.set_ylabel(r'Vitality at Equilibrium $V^*$', fontsize=13)
-    ax.set_title(r'Bifurcation Analysis: $V^*(\beta)$ with Hysteresis', fontsize=14, fontweight='bold')
-
-    ax.set_xlim(0.0, 1.5)
-    ax.set_ylim(0, 10.5)
-    ax.grid(True, alpha=0.3, linestyle=':', linewidth=0.5)
-    ax.legend(loc='upper right', fontsize=10, framealpha=0.95)
-
-    # Add zones
-    ax.fill_between([0.0, 1.5], [V_strategic, V_strategic], [10.5, 10.5],
-                     alpha=0.05, color='green', label='_nolegend_')
-    ax.fill_between([0.0, 1.5], [0, 0], [V_strategic, V_strategic],
-                     alpha=0.05, color='red', label='_nolegend_')
-
-    ax.text(1.35, 8.0, 'Sustainable\nLeadership', fontsize=11, ha='right', color='darkgreen', alpha=0.7)
-    ax.text(1.35, 2.0, 'Zombie\nLeadership', fontsize=11, ha='right', color='darkred', alpha=0.7)
-
+    fig.suptitle('The scan-window artifact behind the retracted '
+                 r'"$\beta_{crit} \approx 0.1015$" claim (Appendix A8)',
+                 fontsize=14, fontweight='bold')
     plt.tight_layout()
-    plt.savefig('/tmp/dlvt-work/manuscript/figures/fig8_bifurcation_hysteresis.pdf')
-    plt.savefig('/tmp/dlvt-work/manuscript/figures/fig8_bifurcation_hysteresis.png')
-    plt.close()
 
-    print("[OK] Fig 8 saved to manuscript/figures/")
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for ext in ('pdf', 'png'):
+        fig.savefig(OUTPUT_DIR / f'fig8_bifurcation_hysteresis.{ext}')
+    plt.close(fig)
 
-    # Print summary
-    print("\n" + "="*70)
-    print("BIFURCATION ANALYSIS SUMMARY")
-    print("="*70)
-    print(f"β range: 0.02 to 1.5")
-    print(f"Critical β (V* crosses {V_strategic}): {beta_crit:.4f}" if beta_crit else "Not found")
-    print(f"Forward jump at β_fwd: {beta_fwd:.4f}" if beta_fwd else "Not detected")
-    print(f"Backward jump at β_bwd: {beta_bwd:.4f}" if beta_bwd else "Not detected")
-    print(f"Hysteresis width h: {h_width:.4f}" if h_width else "No hysteresis detected")
-    print("="*70 + "\n")
-
-    return beta_crit, beta_fwd, beta_bwd, h_width
+    print('[OK] Fig 8 saved to figures/')
+    print('\n' + '=' * 70)
+    print('SCAN-WINDOW ARTIFACT DIAGNOSTIC (Appendix A8)')
+    print('=' * 70)
+    print(f"crosses_threshold : {diag['crosses_threshold']}")
+    print(f"beta_crit_interval: {diag['beta_crit_interval']}")
+    print(f"V* invariant      : {diag['v_star_invariant']}")
+    print(f"beta*C* invariant : {diag['baseline_beta_C_product']}")
+    print(f"diagnostic        : {diag['diagnostic']}")
+    print('=' * 70 + '\n')
+    return diag
 
 
 if __name__ == '__main__':
-    import os
-    os.makedirs('/tmp/dlvt-work/manuscript/figures', exist_ok=True)
-
-    print("DLVT Bifurcation Analysis with Hysteresis (R1.5)\n")
-
-    beta_crit, beta_fwd, beta_bwd, h_width = fig8_bifurcation_hysteresis()
-
-    print(f"✓ Bifurcation diagram with hysteresis analysis complete!")
+    print('DLVT Figure 8 — scan-window artifact and scope absorption\n')
+    result = fig8_scan_window_artifact()
+    assert result['crosses_threshold'] is False, (
+        'Unexpected V*-crossing at baseline: the scope-absorption invariance '
+        'should make V*(beta) flat. Investigate before publishing figures.'
+    )
+    print('Figure 8 complete: artifact illustrated, no bifurcation at baseline.')

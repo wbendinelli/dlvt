@@ -12,7 +12,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 setup(
     name='dlvt',
-    version='2.0.0',
+    version='2.1.0',
     author='William Bendinelli',
     author_email='',
     description='Dynamic Leadership Vitality Theory: A dynamical systems model of executive sustainability',
@@ -50,6 +50,6 @@ setup(
     keywords='dynamical-systems leadership executive burnout complexity',
     project_urls={
         'Source': 'https://github.com/wbendinelli/dlvt',
-        'Paper': 'https://doi.org/your.paper.doi',
+        'Paper': 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6455001',
     },
 )

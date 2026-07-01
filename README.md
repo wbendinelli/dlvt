@@ -2,26 +2,32 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyPI version](https://badge.fury.io/py/dlvt.svg)](https://pypi.org/project/dlvt/)
-[![Tests](https://img.shields.io/badge/tests-38%20passed-brightgreen.svg)](#running-the-tests)
+[![Tests](https://img.shields.io/badge/tests-55%20passed-brightgreen.svg)](#running-the-tests)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 **Author:** William Bendinelli
-**Paper:** *Dynamic Leadership Vitality Theory: A Formal Model of the Zombie-Leader Equilibrium*
-**Target Journal:** *The Leadership Quarterly* (2026)
+**Paper:** *Dynamic Leadership Vitality Theory: A Closed-Form Capability-Trap Model of Leader Vitality and Career Capital* (working paper, 2026 — see [`paper/`](paper/))
+**Target venue:** *Computational and Mathematical Organization Theory* or *Nonlinear Dynamics, Psychology, and Life Sciences*
 
 ---
 
 ## Overview
 
-This package implements the **Dynamic Leadership Vitality Theory (DLVT)** model — a two-dimensional autonomous dynamical system that formalizes how leaders who accumulate career capital simultaneously generate the organizational complexity that drains the vitality they need to deploy it.
+This package implements the **Dynamic Leadership Vitality Theory (DLVT)** model — a two-dimensional autonomous dynamical system in which a leader's accumulated career capital endogenously generates the organizational complexity that drains the vitality needed to deploy it. It is a closed-form, individual-level member of the *capability-trap* family (Repenning & Sterman 2002; Rahmandad & Repenning 2016), micro-founded on effort-recovery theory (Meijman & Mulder 1998; Sonnentag) rather than ego depletion.
 
-The model predicts a single robust attractor: a **zombie-leader equilibrium** at $(V^{*} \approx 4.7,\; C^{*} \approx 32)$ in which the leader retains authority and reputation but permanently lacks the energetic bandwidth for strategic work. The zombie equilibrium is globally asymptotically stable (proved via Bendixson–Dulac + Poincaré–Bendixson on a trapping rectangle).
+**The two headline results:**
 
-**Three outcome regimes** emerge from the parameter space:
+1. **A single, globally stable low-vitality/high-status equilibrium.** Under the baseline calibration the system has exactly one interior attractor, at $(V^{*} \approx 4.7,\; C^{*} \approx 32)$ — informally, a "zombie-leader" state: authority and reputation retained, energetic bandwidth for strategic work chronically depleted. Unlike the bistable/tipping-point structure of capability-erosion models, here the trap is the *default destination*: uniqueness and absence of cycles are proved **globally** (all positive parameters), and the equilibrium is globally asymptotically stable on $\{C>0\}$ (Bendixson–Dulac + Poincaré–Bendixson on a trapping rectangle).
 
-- **Sustainable** — the leader reaches equilibrium with $V^{*} > V_{\mathrm{strategic}}$
-- **Zombie** — the leader converges to $V^{*} < V_{\mathrm{strategic}}$ (the default attractor)
-- **Collapse-Prone** — unsustainable trajectory where burnout is inevitable
+2. **Intervention asymmetry (scope absorption).** Under the separable power-law drain kernel, equilibrium vitality $V^{*}$ is *invariant* to the capital–complexity coupling $\beta$: scope reduction alone cannot raise it — capital re-expands until $\beta C^{*}$ is restored. Only recovery-side parameters ($R\uparrow$, $\mu\downarrow$, $\alpha\uparrow$) move $V^{*}$. This invariance is a property of the kernel family (it fails under exponential/Hill kernels) — an honest corollary, not a law.
+
+**Calibration caveat (read this before citing the numbers).** The baseline values are *illustrative*, not empirical estimates. The regime label is governed by the ratio $\mu/\alpha$: the equilibrium satisfies $V^{*} = (\mu/\alpha)(1 + \phi O^{*})$, the baseline $\mu/\alpha = 2.0$ sits only ~8% below the flip value $(\mu/\alpha)_{\mathrm{crit}} \approx 2.163$, and across a ±2× log-uniform parameter hypercube roughly half the stable equilibria are "zombie". The threshold $V_{\mathrm{strategic}} = 0.5\,V_{\max}$ is stipulated, and $V^*$ sits just 5.9% below it. See `dlvt.nondimensional` and Figure 11 for the effective-parameter and sensitivity analysis.
+
+**Three outcome regimes** partition the parameter space:
+
+- **Sustainable** — stable equilibrium with $V^{*} > V_{\mathrm{strategic}}$
+- **Zombie** (low-vitality/high-status) — stable equilibrium with $V^{*} < V_{\mathrm{strategic}}$; the label is kept in the code API for continuity
+- **Collapse-Prone** — no sustainable interior equilibrium
 
 ## Quick Start
 
@@ -92,7 +98,7 @@ The first equation balances bounded vitality recovery against complexity-driven 
 
 ## Parameter Table
 
-All parameters from **Table 1** of the paper (baseline calibration, $C_0 = 5.0$):
+All parameters from **Table 1** of the paper (baseline calibration, $C_0 = 5.0$). The calibration is **illustrative** — no parameter is estimated from data. Only ~6 dimensionless groups are structurally independent: $V^{*}$ depends on $\mu, \alpha$ only through $\mu/\alpha$, on $R, \delta$ only through $R/\delta$, and has exactly **zero** elasticity to $\beta$, $\eta$ and $O_0$ (see `dlvt.nondimensional`).
 
 | Symbol | Key | Default | Description |
 |:------:|:---:|:-------:|:------------|
@@ -108,15 +114,17 @@ All parameters from **Table 1** of the paper (baseline calibration, $C_0 = 5.0$)
 | $\mu$ | `mu` | 0.2 | Capital depreciation rate |
 | $\varepsilon$ | `eps` | 0.1 | Smooth barrier regularisation |
 
-## Key Theoretical Results
+## Key Theoretical Results (corrected statements, v2.1)
 
-**Theorem 1 (Finite-Time Depletion):** Under exogenous complexity growth that creates a persistent deficit ($\Gamma > 1$), vitality reaches the $\varepsilon$-neighborhood of zero in finite time.
+**Theorem 1 (Finite-Time Band Entry & Positive Quasi-Equilibrium).** Vitality never reaches zero: $dV/dt|_{V=0} = R > 0$, so $V=0$ is repelling. The correct depletion statements are: *(a)* under exogenous overload $O(t) \geq \Omega$ with $\Omega^{\gamma} > 2R/\delta$, vitality enters the band $\{V < \varepsilon\}$ in finite time $T^{*} = t_0 + (V_0 - \varepsilon)/(\delta\Omega^{\gamma}/2 - R)$; *(b)* otherwise $V$ converges exponentially to a **positive** quasi-equilibrium $V_{qe}(O)$, the positive root of $(R/V_{\max})V^2 - (R - R\varepsilon/V_{\max} - \delta O^{\gamma})V - R\varepsilon = 0$. *(Earlier drafts claimed finite-time depletion to zero under any persistent deficit $\Gamma > 1$; that claim was false and has been retracted.)*
 
-**Theorem 2 (Global Asymptotic Stability):** The zombie equilibrium $(V^{*}, C^{*})$ is the unique interior attractor. Proved via Bendixson–Dulac (no closed orbits), trapping rectangle $[0, V_{\max}] \times [0, C_{\max}]$, and Poincaré–Bendixson.
+**Theorem 2 (Global Uniqueness, No Cycles, Global Asymptotic Stability).** *(a)* The interior equilibrium is unique in the entire positive orthant for **all** positive parameters: along the C-nullcline $V_c(O) = (\mu/\alpha)(1+\phi O)$, the residual $\Phi(O)$ is strictly decreasing term-by-term. *(b)* $\mathrm{tr}\,J < 0$ at every interior equilibrium (since $dC/dt=0$ forces $\alpha V^{*}/(1+\phi O^{*})=\mu$), so no Hopf bifurcation exists anywhere; the Dulac function $B = 1/C$ independently rules out closed orbits. *(c)* The equilibrium is globally asymptotically stable on the **open** set $\{C > 0\} \cap \Omega$ — the line $C=0$ is invariant and carries a saddle at $(V \approx 9.93, 0)$. The trapping rectangle is $\Omega = [0, V_{\max}] \times [0, C_{\mathrm{trap}}]$ with $C_{\mathrm{trap}}^{\eta} = ((\alpha V_{\max}/\mu - 1)/\phi - O_0)/\beta$ (baseline $C_{\mathrm{trap}} = 102.67$). *(Earlier drafts used the carrying capacity $C^{*}_{\max} = 44.99$ as the rectangle ceiling; that rectangle leaks — $C_{\mathrm{trap}} \neq C^{*}_{\max}$.)*
 
-**Lemma 2 (Scope Absorption):** $V^{*}(\beta) \equiv V^{*}_0$ for all $\beta$ in the structurally interior region; the invariant $\beta C^{*} \approx 8.008$ is preserved. Scope reduction alone does not raise equilibrium vitality.
+**Corollary (Scope Absorption / Intervention Asymmetry).** Under the separable power-law kernel, $(V^{*}, O^{*})$ solve a $\beta$-free system, so $V^{*}(\beta) \equiv V^{*}_0$ and $\beta C^{*\eta}$ is conserved ($\beta C^{*} = 8.008$ at $\varepsilon = 0.1$; $7.933$ in the $\varepsilon \to 0$ closed form). Scope reduction alone does not raise equilibrium vitality; recovery-side interventions do. The invariance is kernel-dependent (fails under exponential/Hill drains) — see Appendix A8 and `estimate_bifurcation_interval`.
 
-**Proposition 3 (Carrying Capacity):** $C^{*}_{\max} = \left[\left(R/\delta\right)^{1/\gamma} - O_0\right]^{1/\eta} / \beta$
+**Proposition 3 (Carrying Capacity — flux threshold, not a bifurcation):** $C^{*}_{\max} = \left[\left(\left(R/\delta\right)^{1/\gamma} - O_0\right) / \beta\right]^{1/\eta}$ is the capital level at which the depletion ratio $\Gamma = 1$ at full vitality. Since $\det J > 0$ everywhere, **no saddle-node/fold exists**: equilibria do not cease to exist past $C^{*}_{\max}$; the constant separates flux-balance regions only.
+
+**Robustness note ($\gamma = 1$):** with linear drain the unique stable equilibrium persists but is *sustainable* ($V^{*} \approx 8.56$): nonlinear complexity scaling is necessary for the low-vitality regime, not for the existence of an attractor.
 
 ## API Reference
 
@@ -146,12 +154,23 @@ from dlvt.analysis import (
 
 | Function | Description |
 |:---------|:------------|
-| `find_interior_equilibria(p)` | Find all $(V^{*}, C^{*}) > 0$ fixed points |
-| `carrying_capacity(p)` | Maximum sustainable capital $C^{*}_{\max}$ |
+| `find_interior_equilibria(p)` | Find all $(V^{*}, C^{*}) > 0$ fixed points (analytical scan window by default) |
+| `carrying_capacity(p)` | Flux threshold $C^{*}_{\max}$ (Proposition 3 — not a bifurcation) |
+| `trapping_capital_bound(p)` | Trapping-rectangle ceiling $C_{\mathrm{trap}}$ (Theorem 2c) |
 | `jacobian_eigenvalues(V, C, p)` | Eigenvalue structure and stability class |
-| `is_zombie(V, p)` | Check $V^{*} < V_{\mathrm{strategic}}$ |
+| `is_zombie(V, p)` | Check $V^{*} < V_{\mathrm{strategic}}$ (stipulated threshold) |
 | `classify_regime(p)` | Returns `'sustainable'`, `'zombie'`, or `'collapse-prone'` |
 | `regime_map(betas, deltas)` | $(\beta, \delta)$ regime classification grid |
+
+### `dlvt.nondimensional` — Effective Parameters & Global Sensitivity
+
+| Function | Description |
+|:---------|:------------|
+| `reduced_groups(p)` | The ~6 independent dimensionless groups |
+| `v_star_elasticities(p)` | $\partial \ln V^{*} / \partial \ln \theta$ for all 11 parameters |
+| `mu_alpha_critical(p)` | Regime flip value $(\mu/\alpha)_{\mathrm{crit}}$ |
+| `zombie_boundary_map(p, ...)` | Regime frontier in $(\mu/\alpha, \phi)$ and $(\mu/\alpha, \beta)$ |
+| `lhs_zombie_fraction(p, ...)` | Latin-hypercube genericity + rank-correlation screening |
 
 ### `dlvt.figures` — Publication Figure Generation
 
@@ -167,7 +186,7 @@ fig3(output_dir='figures/')  # Phase portrait
 | Fig 2 | Three outcome scenarios (sustainable, zombie, collapse) |
 | Fig 3 | Phase portrait with nullclines and equilibria |
 | Fig 4 | Bifurcation diagrams: $C^{*}$ and $V^{*}$ vs $\beta$, $R$ |
-| Fig 5 | Impact comparison: DLVT vs Human Capital Theory (Becker) |
+| Fig 5 | Impact comparison: DLVT's energetic-deployment constraint vs the frictionless human-capital benchmark (Becker makes no vitality claim; DLVT *adds* the energy channel) |
 | Fig 6 | Carrying capacity heatmap $C^{*}_{\max}(\beta, R)$ |
 | Fig 7 | Regime map in $(\beta, \delta)$ space |
 
@@ -182,9 +201,10 @@ python3 scripts/run_all_figures.py --fig 8-10  # Extended analysis only
 Extended figures (standalone scripts):
 
 ```bash
-python3 scripts/fig8_bifurcation_hysteresis.py    # Hysteresis detection
+python3 scripts/fig8_bifurcation_hysteresis.py    # Scan-window artifact vs flat V*(β) — no hysteresis exists
 python3 scripts/fig9_robustness.py                # Structural robustness
-python3 scripts/fig10_intervention_comparison.py   # Recovery vs redesign
+python3 scripts/fig10_intervention_comparison.py  # Recovery vs redesign (intervention asymmetry)
+python3 scripts/fig11_sensitivity_global.py       # Elasticities, regime frontier, LHS genericity
 ```
 
 ## Running the Tests
@@ -194,7 +214,7 @@ pytest tests/ -q          # 38 tests, all must pass
 pytest tests/ -v --tb=short  # verbose with tracebacks
 ```
 
-The test suite pins every numerical claim in the paper (equilibrium values, carrying capacity, scope-absorption invariant, eigenvalue signs, basin-of-attraction convergence) so that any code change that breaks paper–code consistency is caught immediately.
+The suite combines *pinning tests* (equilibrium values, carrying capacity, scope-absorption invariant, eigenvalue signs, basin-of-attraction convergence — so any code change that breaks paper–code consistency is caught immediately) with *independent verification checks* that use external oracles: the $\varepsilon \to 0$ closed-form equilibrium, a second integrator family (implicit Radau vs RK45), the hand-derived $(\mu/\alpha)_{\mathrm{crit}}$ boundary, direct sign checks of the trace condition and of the trapping/leaking rectangles, and random-parameter sweeps witnessing global uniqueness.
 
 ## Project Structure
 
@@ -204,26 +224,30 @@ dlvt/
 │   ├── __init__.py           # Public API exports
 │   ├── model.py              # ODE system, parameters, integration
 │   ├── analysis.py           # Equilibria, stability, bifurcation, regimes
+│   ├── nondimensional.py     # Effective parameters, elasticities, sensitivity
 │   └── figures.py            # Publication figures 1–7
-├── tests/                    # 38 pinning tests
+├── paper/                    # Manuscript (LaTeX): chapters + appendices A1–A10
+├── tests/                    # Pinning + independent verification tests
 │   ├── test_model.py         # Model numerics, simulation, positive invariance
-│   └── test_analysis.py      # Equilibria, carrying capacity, regimes
-├── scripts/                  # Figure generation (8–10) and robustness grid
+│   ├── test_analysis.py      # Equilibria, stability, regimes, external oracles
+│   └── test_nondimensional.py# Reduced form, degeneracies, genericity
+├── scripts/                  # Figure generation (8–11) and robustness grid
 ├── figures/                  # Generated output (PDF + PNG)
 ├── pyproject.toml            # Package metadata and dependencies
 ├── setup.py                  # Legacy installer
+├── CITATION.cff              # Citation metadata
 └── LICENSE                   # MIT
 ```
 
 ## Citation
 
 ```bibtex
-@article{bendinelli2026dlvt,
-  title   = {Dynamic Leadership Vitality Theory:
-             A Formal Model of the Zombie-Leader Equilibrium},
-  author  = {Bendinelli, William},
-  year    = {2026},
-  note    = {Manuscript submitted to The Leadership Quarterly}
+@unpublished{bendinelli2026dlvt,
+  title  = {Dynamic Leadership Vitality Theory: A Closed-Form Capability-Trap
+            Model of Leader Vitality and Career Capital},
+  author = {Bendinelli, William},
+  year   = {2026},
+  note   = {Working paper}
 }
 ```
 
