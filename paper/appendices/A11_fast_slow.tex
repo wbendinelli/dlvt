@@ -1,0 +1,226 @@
+% ============================================================================
+% Appendix A11 — Fast--Slow Structure and the Quasi-Static Reduction
+% ============================================================================
+\section{Fast--Slow Structure and the Quasi-Static Reduction}
+\label{app:fastslow}
+
+Vitality appears to move faster than capital: the raw recovery rate is
+$R=3$ against a depreciation rate $\mu=0.2$, and earlier drafts inferred a
+``$\sim$15$\times$ timescale separation'' from the ratio of the naive
+timescales $1/R=0.33$ and $1/\mu=5$. This appendix constructs the
+quasi-static (slow-manifold) reduction formally, proves that its
+equilibrium coincides \emph{exactly} with the full interior equilibrium,
+and then \emph{measures}---rather than assumes---the quality of the
+reduction. The honest finding: the separation at the equilibrium is a
+factor $\approx3$, not $15$, and because the linearization there has a
+complex eigenvalue pair, the fast and slow modes \emph{mix}---a strict
+fast--slow decomposition fails precisely where the damped spiral lives.
+The reduction is a legitimate intuition-builder for the slow capital
+drift far from equilibrium; it is not a substitute for the
+two-dimensional analysis, and none of the global results (in particular
+the proof of Theorem~\ref{thm:gas} in Appendix~\ref{app:gas}) relies on
+it. All quantities below are executable via \texttt{dlvt.fastslow} and
+pinned by \texttt{tests/test\_fastslow.py}.
+
+\subsection{The quasi-equilibrium and the slow manifold}
+
+Freeze the capital at a level $C$, hence the complexity at
+$O=O(C)=O_0+\beta C^{\eta}$ from \eqref{eq:complexity}. The vitality
+equation \eqref{eq:dVdt} then relaxes to its quasi-equilibrium
+$V_{\mathrm{qe}}(O)$, the unique positive root of the quadratic
+\eqref{eq:vqe-quadratic},
+\[
+\frac{R}{\Vmax}V^{2}
+-\Bigl(R-\frac{R\varepsilon}{\Vmax}-\delta O^{\gamma}\Bigr)V
+-R\varepsilon=0 ,
+\qquad
+V_{\mathrm{qe}}(O)=\frac{-b+\sqrt{b^{2}+4\,(R/\Vmax)\,R\varepsilon}}{2R/\Vmax},
+\]
+with $b=-(R-R\varepsilon/\Vmax-\delta O^{\gamma})$; the product of the
+roots is $-\varepsilon\Vmax<0$, so the ``$+$'' branch is always the
+positive one, and $V_{\mathrm{qe}}$ is strictly decreasing along
+$C\mapsto V_{\mathrm{qe}}(O(C))$ (Proposition~\ref{prop:nullcline}). Define the
+\emph{slow manifold} as the graph
+\begin{equation}
+\label{eq:slowmanifold}
+\mathcal{M}
+\;=\;
+\bigl\{(V,C): V=V_{\mathrm{qe}}(O(C)),\ C\ge0\bigr\}.
+\end{equation}
+By construction $\mathcal{M}$ is not an approximation to the
+$V$-nullcline of the full system---it \emph{is} the $V$-nullcline, since
+the quasi-equilibrium condition at frozen $O$ is literally $\dot V=0$.
+Slaving $V$ to $\mathcal{M}$ in the capital equation
+\eqref{eq:dCdt} yields the reduced one-dimensional slow flow
+\begin{equation}
+\label{eq:reducedflow}
+\dot C
+\;=\;
+C\Bigl(\frac{\alpha\,V_{\mathrm{qe}}(O(C))}{1+\varphi O(C)}-\mu\Bigr)
+\;=:\;
+C\,g(C),
+\end{equation}
+the quasi-steady-state approximation familiar from enzyme kinetics and
+ecological modeling \citep{murray2002mathematical}. Implementation:
+\texttt{dlvt.fastslow.v\_quasi\_equilibrium},
+\texttt{slow\_manifold}, \texttt{reduced\_slow\_rhs},
+\texttt{simulate\_reduced}; the closed-form root satisfies the vitality
+equation to residual $<10^{-13}$ across $O\in\{1,5,9,30\}$
+(\texttt{test\_v\_quasi\_equilibrium\_satisfies\_vitality\_equation}).
+
+\subsection{The reduced equilibrium is the full equilibrium---exactly}
+
+\begin{proposition}[Zero equilibrium bias of the reduction]
+\label{prop:reducedeq}
+$C^{\dagger}>0$ is an equilibrium of the reduced flow
+\eqref{eq:reducedflow} if and only if
+$\bigl(V_{\mathrm{qe}}(O(C^{\dagger})),\,C^{\dagger}\bigr)$ is an interior
+equilibrium of the full system
+\eqref{eq:dVdt}--\eqref{eq:dCdt}. In particular the reduced flow has
+exactly one positive equilibrium, $C^{\dagger}=C^{*}$, with
+$V_{\mathrm{qe}}(O(C^{*}))=V^{*}$.
+\end{proposition}
+
+\begin{proof}
+$g(C^{\dagger})=0$ is precisely the capital-nullcline condition
+\eqref{eq:cnullcline} evaluated at $V=V_{\mathrm{qe}}(O(C^{\dagger}))$, and
+membership in $\mathcal{M}$ is the $V$-nullcline condition. A point
+satisfying both nullcline conditions is an interior equilibrium of the
+full system, and conversely every interior equilibrium lies on both
+nullclines, hence on $\mathcal{M}$ with $g=0$. Uniqueness is inherited
+from Theorem~\ref{thm:uniqueness}.
+\end{proof}
+
+Unlike generic quasi-steady-state reductions, which displace equilibria
+by $O(\epsilon)$ in the separation parameter, this reduction has
+\emph{zero} equilibrium bias, because the manifold used for the slaving
+is the exact nullcline rather than an asymptotic expansion of it.
+Numerically, a Brent solve of $g(C)=0$ near $C^{*}$ reproduces
+$(V^{*},C^{*})=(4.70253,\,32.0337)$ to a mismatch of
+$7\times10^{-15}$
+(\texttt{test\_reduced\_equilibrium\_coincides\_with\_full\_interior\_equilibrium}).
+
+\subsection{How separated are the timescales, really?}
+
+The raw-rate comparison ($1/R=0.33$ versus $1/\mu=5$, a factor $15$) is
+the wrong calculation twice over.
+
+\emph{First correction: linearize, don't compare raw coefficients.} Near
+the equilibrium, the vitality relaxation rate is not $R$ but
+\[
+|J_{VV}|
+=\frac{R}{\Vmax}
++\frac{\delta O^{*\gamma}\varepsilon}{(V^{*}+\varepsilon)^{2}}
+=0.30704
+\qquad(\text{Appendix~\ref{app:jacobian}}),
+\]
+because the logistic recovery term relaxes at rate $R/\Vmax$, not $R$.
+Symmetrically, the capital rate is not $\mu$ but
+\[
+|J_{CC}|
+=\frac{\alpha C^{*}V^{*}\varphi\,\beta\eta\,C^{*\,\eta-1}}
+       {(1+\varphi O^{*})^{2}}
+=0.10218 ,
+\]
+because on the capital nullcline the impact inflow cancels the
+depreciation ($\alpha V^{*}/(1+\varphi O^{*})=\mu$ exactly), leaving only
+the complexity-feedback term. The measured diagonal ratio is
+\[
+\biggl|\frac{J_{VV}}{J_{CC}}\biggr| \;=\; 3.005 ,
+\]
+a factor of $\sim3$, not $15$
+(\texttt{test\_eigen\_separation\_is\_about\_3\_not\_15\_and\_modes\_mix}).
+
+\emph{Second correction: a diagonal ratio of $3$ does not deliver modes.}
+A fast--slow decomposition in the sense of singular perturbation theory
+requires a real spectral gap between a fast and a slow eigenvalue. Here
+the discriminant of the Jacobian is negative
+($(\operatorname{tr}J)^{2}-4\det J=-0.4388$, Appendix~\ref{app:jacobian}),
+so the eigenvalues are the complex pair
+$\lambda_{1,2}=-0.205\pm0.331i$: both ``modes'' share one decay rate
+($|\mathrm{Re}\,\lambda|=0.205$) and one rotation rate, and their common
+modulus is $\sqrt{\det J}=0.389$. Near the equilibrium there are no
+separate fast and slow directions at all---the coordinates mix into a
+single damped-spiral mode \citep{strogatz2015nonlinear}. That is not a
+technicality; it is \emph{why} the approach to $(V^{*},C^{*})$ is an
+overshoot-and-return spiral rather than a monotone relaxation.
+
+\subsection{Measured reduction error}
+
+The consequence is quantitative and measurable. Integrating the full
+system and the reduced flow \eqref{eq:reducedflow} from the same
+$C_{0}$ (the reduced trajectory necessarily starts on $\mathcal{M}$)
+and comparing $C(t)$ on a common grid over $[0,120]$
+(\texttt{dlvt.fastslow.reduction\_error}) gives, at baseline:
+
+\begin{center}
+\begin{tabular}{lccc}
+initial condition $(V_0, C_0)$ & max rel.\ error in $C(t)$ &
+mean rel.\ error & equilibrium mismatch\\
+\hline
+$(8,\ 5)$    & $15.3\%$ & $1.3\%$ & $7\times10^{-15}$\\
+$(2,\ 60)$   & $20.6\%$ & $1.2\%$ & ---\\
+$(9.5,\ 80)$ & $20.4\%$ & $1.6\%$ & ---\\
+\end{tabular}
+\end{center}
+
+The error is \emph{not} uniformly ``a few percent'': from $(8,5)$ it
+peaks at $15.3\%$ at $t\approx9$, exactly during the overshoot---the full
+trajectory overshoots to $C\approx36.5>C^{*}$ while the reduced flow,
+being one-dimensional and therefore monotone, approaches $C^{*}$ from
+below and can never overshoot. Away from the spiral the reduction is
+excellent: the mean error is $\sim1\%$, and for $t>60$ the two solutions
+agree to $<10^{-5}$ (both sit at the---identical---equilibrium). The
+pinning test asserts the measured band honestly: maximum relative error
+below $0.25$ \emph{and above} $0.05$, so that a future ``improvement''
+cannot silently claim the reduction to be better than it is
+(\texttt{test\_reduction\_tracks\_slow\_dynamics\_with\_measured\_error}).
+
+\subsection{The basin portrait}
+
+Theorem~\ref{thm:gas} makes a stark prediction: within the trapping
+region the basin of the interior equilibrium is the \emph{entire} open
+half-plane $\{C>0\}$---no basin boundary, no competing attractor, no
+escape. The colored basin portrait makes this executable: on a
+$40\times40$ grid of initial conditions
+$(V_{0},C_{0})\in[0.2,\Vmax]\times[0.2,90]$, the full system is
+integrated and the first time after which the trajectory enters and
+\emph{remains} within the box $\{|V-V^{*}|<0.5,\ |C-C^{*}|<0.5\}$ is
+recorded (\texttt{dlvt.fastslow.basin\_portrait\_grid}). All $1600$
+initial conditions converge---zero exceptions---with times ranging from
+$0$ (starting inside the band) to $30.0$, median $19.0$; the median is,
+satisfyingly, one rotation period $2\pi/0.331\approx19.0$ of the spiral,
+since most trajectories need one final loop to settle into the band. The
+portrait is a smooth gradient of finite times, which is exactly what a
+single global attractor looks like; a basin boundary would appear as a
+discontinuity, and none exists
+(\texttt{test\_basin\_grid\_all\_positive\_capital\_ics\_converge}).
+The only slow region hugs the invariant axis $C\approx0$, where
+trajectories linger near the axis saddle $(9.934,\,0)$ of
+Appendix~\ref{app:regularization} before the unstable direction ejects
+them into the interior.
+
+\subsection{Remarks}
+
+\begin{enumerate}
+\item \emph{What the reduction is for.} The reduced flow
+\eqref{eq:reducedflow} explains the slow architecture of the transient
+in one line: capital drifts up (or down) the $V$-nullcline at the rate
+$g(C)$, and the sign of $g$---positive below $C^{*}$, negative
+above---is the entire one-dimensional story. This is the right mental
+model for the long build-up phase of Figure~\ref{fig:temporal} and for
+comparative statics along the manifold.
+\item \emph{What it is not for.} No one-dimensional autonomous flow can
+oscillate, so the reduction structurally cannot reproduce the
+overshoot-and-return approach, the $\sim19$-unit rotation period, or any
+quantity that depends on the spiral (peak overshoot, settling time into
+a band). Those require the full planar system.
+\item \emph{Independence of the global proof.} The proof of
+Theorem~\ref{thm:gas} (Appendix~\ref{app:gas}) uses a trapping rectangle,
+a Dulac certificate, and Poincar\'e--Bendixson; it makes no use of
+timescale separation, and its validity is unaffected by the failure of
+the strict fast--slow decomposition near the equilibrium. The
+``$\sim$15$\times$ separation'' phrasing of earlier drafts is retracted
+in favor of the measured statement: diagonal ratio $\approx3$, complex
+pair, mode mixing.
+\end{enumerate}

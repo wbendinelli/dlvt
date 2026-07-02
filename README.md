@@ -2,7 +2,7 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyPI version](https://badge.fury.io/py/dlvt.svg)](https://pypi.org/project/dlvt/)
-[![Tests](https://img.shields.io/badge/tests-55%20passed-brightgreen.svg)](#running-the-tests)
+[![Tests](https://img.shields.io/badge/tests-80%20passed-brightgreen.svg)](#running-the-tests)
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 **Author:** William Bendinelli
@@ -205,6 +205,9 @@ python3 scripts/fig8_bifurcation_hysteresis.py    # Scan-window artifact vs flat
 python3 scripts/fig9_robustness.py                # Structural robustness
 python3 scripts/fig10_intervention_comparison.py  # Recovery vs redesign (intervention asymmetry)
 python3 scripts/fig11_sensitivity_global.py       # Elasticities, regime frontier, LHS genericity
+python3 scripts/fig12_stochastic_robustness.py    # SDE attractor persistence + identifiability ridges
+python3 scripts/fig13_sobol_indices.py            # Formal Sobol indices (Jansen/Saltelli)
+python3 scripts/fig14_fastslow_basin.py           # Slow manifold, basin portrait, reduction error
 ```
 
 ## Running the Tests

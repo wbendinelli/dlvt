@@ -4,7 +4,7 @@
 
 **Code mapping:** Eq. (3.2)/(3.5)/(3.6)/(3.7) ↔ `dlvt/model.py` (`impact`, `dlvt_system`, `complexity`); Table 1 (Section 3.7) ↔ `DEFAULT_PARAMS` and `tests/test_model.py::PAPER_BASELINE`; Theorem 1, Theorem 2, Lemma 1, Corollary 1 (legacy "Lemma 2"), Proposition 3 / Eqs. (3.14)–(3.15) ↔ `dlvt/analysis.py` (`find_interior_equilibria`, `bendixson_dulac_certificate`, `jacobian_eigenvalues`, `estimate_bifurcation_interval`, `carrying_capacity`); Definitions 5 and 7 ↔ `simulate` (depletion ratio G) and `is_zombie`.
 
-Appendix ↔ code: A1 `test_model.py` (invariance tests); A4–A6 `test_analysis.py` (equilibria, Jacobian, carrying capacity); A7 `find_regularization_branch`; A8 `estimate_bifurcation_interval`; A9 epsilon ladder; A10 `bendixson_dulac_certificate` + `basin_of_attraction_sweep`.
+Appendix ↔ code: A1 `test_model.py` (invariance tests); A4–A6 `test_analysis.py` (equilibria, Jacobian, carrying capacity); A7 `find_regularization_branch`; A8 `estimate_bifurcation_interval`; A9 epsilon ladder; A10 `bendixson_dulac_certificate` + `basin_of_attraction_sweep`; A11 `dlvt/fastslow.py` (quasi-static reduction, ~3× eigenmode separation, basin portrait; Figure 14).
 
 Section 6 (empirical program) maps to the draft pre-registration in `../prereg/PREREGISTRATION.md` and to the companion modules `dlvt/stochastic.py` (noise robustness) and `dlvt/recovery.py` (parameter recovery / identifiability ridges; Figure 12).
 
