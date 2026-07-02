@@ -28,33 +28,54 @@ object, formalized in the energy-gated impact function \eqref{eq:impact}.
 \label{sec:implications}
 
 Within the declared scope conditions, the model's implications invert a
-common instinct. Scope reduction---delegating units, flattening
-portfolios, trimming spans---feels like the natural remedy for executive
-overload, but within the power-law family it is absorbed: capital
+common instinct. Scope reduction---delegating business units, flattening
+portfolios, pruning interfaces, trimming spans of control---feels like the
+natural remedy for executive overload. Within the power-law kernel family,
+the model says it is absorbed: after a transient improvement, capital
 re-expands until the complexity load is restored (P3), and equilibrium
-vitality is unchanged. What moves the equilibrium is the recovery side:
-protected restoration capacity ($R$), slower capital decay for the same
-impact ($\mu$), or higher conversion of impact into capital ($\alpha$),
-consistent with evidence that respite interventions produce real but
-decaying gains unless structurally maintained \citep{davidson2010sabbatical}
-and with the recovery literature's emphasis on ongoing rather than episodic
-restoration \citep{sonnentag2022recovery}. The model also cautions against
-reading high-status incumbents' visible durability as evidence of
-sustainability: at the low-vitality equilibrium, status ($C^{*}$) is at its
-lifetime maximum precisely while deployable energy is chronically below
-threshold.
+vitality returns to where it was. The practical signature is the
+delegation that relieves load for a quarter and then quietly refills. We
+stress the hedge: this is a within-family prediction, and P4 marks where
+it fails---where drain saturates in complexity, scope redesign regains
+leverage.
+
+What moves the equilibrium, in the model, is the recovery side: protected
+restoration capacity ($R$), slower capital decay for the same impact
+($\mu$), or higher conversion of impact into capital ($\alpha$).
+Concretely, this ranks structural interventions---detachment blocks and
+recovery routines built into the operating calendar, sabbatical
+scheduling with protected re-entry---above one-time resets, consistent
+with evidence that respite interventions produce real but decaying gains
+unless structurally maintained \citep{davidson2010sabbatical} and with the
+recovery literature's emphasis on ongoing rather than episodic restoration
+\citep{sonnentag2007recovery,sonnentag2022recovery}. The prescription
+converges with practitioner arguments for managing energy rather than
+time \citep{loehr2003power,schwartz2007manage}, but it is derived here
+from equilibrium structure rather than from anecdote, and it comes with a
+falsifier attached (P6).
+
+For boards and senior-talent processes, the model adds a caution about
+inference from visible durability: at the low-vitality/high-status
+equilibrium, status ($C^{*}$) is at its lifetime maximum precisely while
+deployable energy is chronically below threshold, so an incumbent's
+retained authority and reputation are uninformative about sustainability.
+Pending the field test of \S\ref{sec:empirical}, all three implications
+should be read as predictions to be audited, not prescriptions to be
+rolled out.
 
 \subsection{Limitations}
 \label{sec:limitations}
 
-Six limitations bound the theory's claims; we state them as bluntly as the
-results.
+Six boundaries delimit the theory's claims. Each is a deliberate scope
+decision: we state what the model excludes, why, and what applies instead.
 
-\paragraph{Deterministic dynamics.} The model has no stochastic forcing.
-Real careers experience shocks (health events, market dislocations,
-reorganizations) that could produce excursions and regime misclassification
-in finite samples; the global-stability result guarantees return to the
-attractor but says nothing about excursion costs.
+\paragraph{Deterministic dynamics.} The model is deterministic by design;
+it has no stochastic forcing. Real careers experience shocks---health
+events, market dislocations, reorganizations---that could produce
+excursions and regime misclassification in finite samples. The
+global-stability result guarantees return to the attractor but prices no
+excursion costs; a stochastic extension is the natural next model, not a
+patch on this one.
 
 \paragraph{Single leader, closed loop.} Complexity is modeled as a
 deterministic image of the leader's own capital
@@ -63,31 +84,33 @@ empirical claim: peer competition, organizational design, and market
 turbulence all generate load that is orthogonal to own-capital
 accumulation. Where exogenous load dominates, the exogenous-complexity
 variant (Proposition~\ref{prop:band}) is the right object, and the
-endogenous feedback results do not apply.
+endogenous-feedback results do not apply.
 
 \paragraph{Illustrative calibration.} Table~\ref{tab:parameters} has no
-empirical anchor. The honest summary of the baseline is that it sits near
-its own regime boundary: $\mu/\alpha=2.0$ against a flip value of $2.163$
-($8\%$ margin), and $P(\text{low-vitality}\mid\text{stable equilibrium})
-\approx0.49$ across a $\pm2\times$ log-uniform hypercube. Qualitative
-structure (uniqueness, stability, scope absorption) is
-calibration-independent; regime labels are not.
+empirical anchor, and we quantify exactly how much hangs on it. The
+baseline sits near its own regime boundary: $\mu/\alpha=2.0$ against a
+flip value of $2.163$ ($8\%$ margin), and
+$P(\text{low-vitality}\mid\text{stable equilibrium})\approx0.49$ across a
+$\pm2\times$ log-uniform hypercube. Qualitative structure---uniqueness,
+stability, scope absorption---is calibration-independent; regime labels
+are not, and no baseline label in this paper should be read otherwise.
 
 \paragraph{Stipulated threshold.} The strategic threshold
 $\Vstrat=0.5\,\Vmax$ (Definition~\ref{def:threshold}) is a labeling
 convention. The baseline equilibrium sits only $5.9\%$ below it, and any
 threshold below $0.47\,\Vmax$ reclassifies the baseline as sustainable.
-Classification claims should therefore be read as conditional on $\theta$,
-and empirical work should estimate the threshold rather than inherit it.
+Classification claims are therefore conditional on $\theta$; empirical
+work should estimate the threshold rather than inherit it.
 
 \paragraph{Identifiability.} The eleven parameters collapse to
 approximately six effective dimensionless groups after nondimensionalizing
 $V$ by $\Vmax$, $C$ by $\beta^{-1/\eta}$, and time by $\mu^{-1}$; within
 the equilibrium predictions there are pronounced ridges---most importantly
 in $\mu/\alpha$ (which pins $V^{*}$ via \eqref{eq:vstar}) and $R/\delta$
-(which pins the flux threshold)---so cross-sectional equilibrium data alone
-cannot identify the full parameter vector. Identification requires
-trajectories, or shocks (below).
+(which pins the flux threshold)---so cross-sectional equilibrium data
+alone cannot identify the full parameter vector. Identification requires
+trajectories or shocks, and the empirical program is built accordingly
+(\S\ref{sec:empirical}).
 
 \paragraph{Level of formal guarantee.} The global-stability proof is
 planar machinery (Dulac, Poincar\'e--Bendixson) and does not survive added
@@ -98,40 +121,39 @@ dimensions.
 \subsection{An empirical validation roadmap}
 \label{sec:roadmap}
 
-The theory is built to be tested, and the propositions of
-\S\ref{sec:propositions} order the program from cheap to decisive.
-First, \emph{measurement and trajectory fitting}: subjective vitality
-\citep{ryan1997subjective} and recovery experience
-\citep{sonnentag2007recovery} instruments administered longitudinally,
-with career capital proxied by scope, compensation, and network centrality,
-fitted with continuous-time structural equation models to test the damped
-spiral signature and single-attractor convergence (P1). Second,
-\emph{exogenous shocks to break the $\mu/\alpha$ degeneracy}: promotions,
-reorganizations, and mandated leaves act as natural experiments that
-separate depreciation from accumulation, which cross-sectional equilibrium
-data cannot (P2, \S\ref{sec:limitations}). Third, the \emph{killer test}: a
-pre-registered $2{\times}2$ field experiment crossing scope redesign
-(coupling reduction) with recovery support (protected restoration
-capacity) over a 12--18~month horizon---long enough for the model's
-re-expansion dynamics to complete. DLVT predicts a main effect of recovery
-support on equilibrium vitality, no durable main effect of scope redesign,
-and conservation of the scope--capital product in the redesign arms (P3,
-P6). A durable vitality gain from scope redesign alone, with the product
-not conserved, falsifies the theory's central mechanism rather than a
-calibration choice.
+The propositions of \S\ref{sec:propositions} order the empirical program
+from cheap to decisive. First, \emph{measurement and trajectory fitting}:
+longitudinal administration of validated vitality and recovery instruments
+\citep{ryan1997subjective,sonnentag2007recovery}, with career capital
+proxied by scope, compensation, and network centrality, fitted in
+continuous time to test the damped-spiral signature and single-attractor
+convergence (P1). Second, \emph{exogenous shocks}: promotions,
+reorganizations, and mandated leaves act as natural experiments that break
+the $\mu/\alpha$ ridge which cross-sectional equilibrium data cannot (P2;
+\S\ref{sec:limitations}). Third, the \emph{killer test}: a pre-registered
+$2{\times}2$ field experiment crossing scope redesign with recovery
+support over a 12--18~month horizon, long enough for the model's
+re-expansion dynamics to complete. DLVT predicts a durable main effect of
+recovery support on vitality, no durable main effect of scope redesign,
+and conservation of the scope--capital product $\beta C^{\eta}$ in the
+redesign arms (P3, P6); a durable vitality gain from scope redesign alone,
+with the product not conserved, falsifies the central mechanism rather
+than a calibration choice. Section~\ref{sec:empirical} develops this
+program in full---measurement model, design cadence, estimation strategy,
+identification plan, and the pre-registered protocol of the killer test.
 
 \subsection{Conclusion}
 \label{sec:conclusion}
 
-Leadership research has documented, at length, that success is energetically
-expensive \citep{hambrick2005executive,rudolph2020healthy}. DLVT's
-contribution is to show that a minimal, fully analyzable model of that
-observation---capital builds complexity, complexity drains vitality,
+Leadership research has documented, at length, that success is
+energetically expensive \citep{hambrick2005executive,rudolph2020healthy}.
+DLVT's contribution is to show that a minimal, fully analyzable model of
+that observation---capital builds complexity, complexity drains vitality,
 vitality gates impact---delivers strong and falsifiable structure: one
 equilibrium, globally stable, low-vitality by default under convex load,
 indifferent to scope redesign within its kernel family, and movable only
 from the recovery side. The corrected mathematics in this manuscript is
-deliberately less dramatic than earlier drafts: no finite-time collapse, no
-critical coupling, no fold catastrophe. What remains is, we believe, more
-useful: a small set of sharp claims, each with a stated boundary and a
-stated way to kill it.
+deliberately less dramatic than earlier drafts: no finite-time collapse,
+no critical coupling, no fold catastrophe. What remains is, we believe,
+more useful: a small set of sharp claims, each with a stated boundary and
+a stated way to kill it.

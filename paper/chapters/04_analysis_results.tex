@@ -8,26 +8,28 @@
 
 This section reports the phase-plane analysis at the baseline calibration,
 the comparative statics---including the corrected reading of the
-$\beta$-sweep---and the falsifiable proposition set. Every number quoted here
-is pinned by an automated test in the companion repository.
+$\beta$-sweep---and the falsifiable proposition set. Every number quoted
+here is pinned by an automated test in the companion repository.
 
 \subsection{Baseline dynamics}
 \label{sec:results-baseline}
 
-Figure~\ref{fig:temporal} shows the baseline trajectory from
-$(V_0,C_0)=(8.0,5.0)$. Early-career dynamics are benign: complexity is low,
-the depletion ratio $\Gamma\ll1$, and vitality remains near the ceiling
-while capital compounds. As capital accumulates, complexity---and with it
-the drain term of \eqref{eq:dVdt}---grows quadratically ($\gamma=2$), and
-vitality is pulled down through the strategic threshold. The system
-converges to the unique interior equilibrium
-$(V^{*},C^{*})=(4.7025,\,32.0337)$ as a damped spiral (eigenvalues
-$-0.205\pm0.331i$; rotation period $\approx19$ time units, amplitude
-e-folding time $\approx4.9$; Appendix~\ref{app:jacobian}). The overshoot is
-diagnostic: capital transiently exceeds its equilibrium value---from
-$(10,40)$ it peaks near $C\approx46.4$, above the carrying capacity
-$\Cmax=44.99$---before complexity friction pulls it back
-(Remark~\ref{rem:ctrap}).
+Figure~\ref{fig:temporal} traces the baseline trajectory from
+$(V_0,C_0)=(8.0,5.0)$ and shows the model's causal loop unfolding in time.
+Three features should be visible. First, an early benign phase: complexity
+is low, the depletion ratio $\Gamma\ll1$, and vitality holds near the
+ceiling while capital compounds. Second, the turn: as capital accumulates,
+complexity---and with it the drain term of \eqref{eq:dVdt}---grows
+quadratically ($\gamma=2$), and vitality is pulled down through the
+strategic threshold even as capital continues to rise. Third, convergence:
+the system spirals into the unique interior equilibrium
+$(V^{*},C^{*})=(4.7025,\,32.0337)$ with eigenvalues $-0.205\pm0.331i$
+(rotation period $\approx19$ time units, amplitude e-folding time
+$\approx4.9$; Appendix~\ref{app:jacobian}). The transient overshoot is
+diagnostic rather than incidental: from $(10,40)$ capital peaks near
+$C\approx46.4$, above the carrying capacity $\Cmax=44.99$, before
+complexity friction pulls it back---visual confirmation that $\Cmax$
+bounds sustainable flux, not reachable states (Remark~\ref{rem:ctrap}).
 
 \begin{figure}[t]
 \centering
@@ -37,16 +39,16 @@ the baseline calibration (Table~\ref{tab:parameters}), $(V_0,C_0)=(8,5)$.}
 \label{fig:temporal}
 \end{figure}
 
-Figure~\ref{fig:scenarios} contrasts the three outcome regimes of
-Definition~\ref{def:lowvitality}: sustainable (low coupling and low cost,
-$\delta=0.008$, $\beta=0.15$: $V^{*}>\Vstrat$), low-vitality (baseline), and
-collapse-prone (parameters with $\Cmax=0$, where even $C=0$ implies
-$\Gamma>1$ and vitality is driven into the depletion band;
-Proposition~\ref{prop:band}(ii)). Figure~\ref{fig:phase} shows the phase
-portrait: the strictly decreasing vitality nullcline
-(Proposition~\ref{prop:nullcline}), the increasing capital nullcline
-\eqref{eq:cnullcline}, their unique interior crossing
-(Theorem~\ref{thm:uniqueness}), and the spiral flow into it.
+Figure~\ref{fig:scenarios} places the three outcome regimes of
+Definition~\ref{def:lowvitality} side by side: three qualitatively
+different vitality trajectories from identical initial conditions. In the
+sustainable panel (low coupling and low cost, $\delta=0.008$,
+$\beta=0.15$) vitality settles above $\Vstrat$; in the baseline panel it
+settles below; and in the collapse-prone panel (parameters with
+$\Cmax=0$) even $C=0$ implies $\Gamma>1$, and vitality is driven into the
+depletion band (Proposition~\ref{prop:band}(ii)). The figure establishes
+that the regime label is a property of parameters, not of starting
+points---the claim that Propositions P1 and P2 below make testable.
 
 \begin{figure}[t]
 \centering
@@ -54,6 +56,16 @@ portrait: the strictly decreasing vitality nullcline
 \caption{Three outcome regimes: sustainable, low-vitality, collapse-prone.}
 \label{fig:scenarios}
 \end{figure}
+
+Figure~\ref{fig:phase} compresses the same dynamics into the phase plane.
+Two curves organize the portrait: the strictly decreasing vitality
+nullcline (Proposition~\ref{prop:nullcline}) and the increasing capital
+nullcline \eqref{eq:cnullcline}. Their unique interior crossing
+(Theorem~\ref{thm:uniqueness}) is the attractor, and the flow field shows
+every plotted trajectory spiraling into it---no second equilibrium, no
+closed orbit, no basin boundary anywhere in the frame. This is the
+single-attractor geometry that separates DLVT from bistable capability
+traps.
 
 \begin{figure}[t]
 \centering
@@ -66,13 +78,15 @@ $(V^{*},C^{*})\approx(4.70,\,32.03)$.}
 \subsection{Comparative statics and the corrected $\beta$-sweep}
 \label{sec:results-statics}
 
-Figure~\ref{fig:bifurcation} sweeps $\beta$ and $R$. The $R$-panel behaves
-as intuition suggests: equilibrium vitality rises with recovery capacity.
-The $\beta$-panel is the substantive result: $V^{*}(\beta)$ is \emph{flat}.
-By Corollary~\ref{cor:scope}, $(V^{*},O^{*})$ solve a $\beta$-free system,
-and all $\beta$-dependence is absorbed into
-$C^{*}(\beta)=(O^{*}-O_0)/\beta=8.008/\beta$ (at $\varepsilon=0.1$; $7.933$
-in the $\varepsilon\to0$ limit). Two consequences follow.
+Figure~\ref{fig:bifurcation} sweeps $\beta$ and $R$, and the two panels
+should look strikingly different. The $R$-panel behaves as intuition
+suggests: equilibrium vitality rises with recovery capacity. The
+$\beta$-panel carries the substantive result: $V^{*}(\beta)$ is
+\emph{flat}, while $C^{*}(\beta)$ falls along the hyperbola
+$C^{*}(\beta)=(O^{*}-O_0)/\beta=8.008/\beta$ (at $\varepsilon=0.1$;
+$7.933$ in the $\varepsilon\to0$ limit). By Corollary~\ref{cor:scope},
+$(V^{*},O^{*})$ solve a $\beta$-free system, so all $\beta$-dependence is
+absorbed into capital. Two consequences follow.
 
 First, there is \emph{no bifurcation in $\beta$} within the power-law
 family. An earlier draft reported a critical coupling
@@ -87,10 +101,6 @@ Second, the flatness of $V^{*}(\beta)$ is the formal content of the
 \emph{intervention asymmetry}: reducing the scope coupling reallocates the
 equilibrium between capital and complexity but leaves equilibrium vitality
 untouched, whereas recovery-side parameters move $V^{*}$ directly.
-Figure~\ref{fig:impact} makes the deployment wedge visible by comparing
-DLVT impact with the counterfactual in which capital is deployed without an
-energy gate, the implicit assumption of classical human-capital reasoning
-\citep{becker1993human}.
 
 \begin{figure}[t]
 \centering
@@ -100,6 +110,17 @@ against $\beta$ and $R$. Note the $\beta$-invariance of $V^{*}$
 (Corollary~\ref{cor:scope}) and the conserved product $\beta C^{*}$.}
 \label{fig:bifurcation}
 \end{figure}
+
+Figure~\ref{fig:impact} makes the deployment wedge visible: it plots
+realized impact under DLVT against the counterfactual in which the same
+capital is deployed without an energy gate---the implicit assumption of
+classical human-capital reasoning \citep{becker1993human}. The two curves
+coincide early, while vitality is high and the gate is effectively open,
+then separate as complexity-driven drain lowers vitality; near equilibrium
+the ungated counterfactual continues to credit the leader with the full
+yield of a large capital stock while realized impact plateaus well below
+it. The gap between the curves is the model's central object: capital
+owned but not usable.
 
 \begin{figure}[t]
 \centering
@@ -112,22 +133,27 @@ human-capital counterfactual.}
 \subsection{Carrying capacity and the regime map}
 \label{sec:results-regimes}
 
-Figure~\ref{fig:heatmap} maps the carrying capacity
-$\Cmax(\beta,R)$ of Proposition~\ref{prop:carrying}: decreasing in $\beta$
-and $\delta$, increasing in $R$, per \eqref{eq:cmax-statics}. We reiterate
-its corrected interpretation: $\Cmax$ is the flux threshold at which
-$\Gamma=1$ at full vitality, not a fold point---$\det J>0$ everywhere
-(Lemma~\ref{lem:trace}), so no equilibria are created or destroyed there,
-and trajectories may transiently exceed it.
+Figure~\ref{fig:heatmap} maps the carrying capacity $\Cmax(\beta,R)$ of
+Proposition~\ref{prop:carrying}. The level sets should be read as
+comparative statics made visible: $\Cmax$ falls with the coupling $\beta$
+and the energetic cost $\delta$, and rises with recovery capacity $R$, per
+\eqref{eq:cmax-statics}. We reiterate the corrected interpretation: $\Cmax$
+is the flux threshold at which $\Gamma=1$ at full vitality, not a fold
+point---$\det J>0$ everywhere (Lemma~\ref{lem:trace}), so no equilibria
+are created or destroyed there, and trajectories may transiently exceed
+it.
 
-Figure~\ref{fig:regimemap} classifies the $(\beta,\delta)$ plane into the
-three regimes. The regime label at fixed drain-side parameters is governed
-by $\mu/\alpha$: at baseline $\mu/\alpha=2.0$ against the flip value
-$2.163$ at which $V^{*}=\Vstrat$ ($8\%$ margin). Across a $\pm2\times$
-log-uniform hypercube around baseline, $P(\text{low-vitality}\mid\text{stable
-equilibrium})\approx0.49$: the theory's illustrative calibration sits near
-the center of its own regime boundary, which is the honest way to read all
-baseline classifications in this paper.
+Figure~\ref{fig:regimemap} partitions the $(\beta,\delta)$ plane into the
+three regimes of Definition~\ref{def:lowvitality}; the reader should note
+how close the baseline point sits to the sustainable/low-vitality
+boundary. That proximity is quantified by the regime governor: at fixed
+drain-side parameters the label turns on $\mu/\alpha$, and the baseline
+$\mu/\alpha=2.0$ sits only $8\%$ below the flip value $2.163$ at which
+$V^{*}=\Vstrat$. Across a $\pm2\times$ log-uniform hypercube around
+baseline, $P(\text{low-vitality}\mid\text{stable
+equilibrium})\approx0.49$: the illustrative calibration lies near the
+center of its own regime boundary, which is the honest way to read every
+baseline classification in this paper.
 
 \begin{figure}[t]
 \centering
@@ -149,9 +175,14 @@ Eq.~\eqref{eq:cmax-statics}.}
 \label{sec:propositions}
 
 We close the analysis with the proposition set the theory stakes its claim
-on. These are \emph{empirical} propositions (labeled P1--P6 to distinguish
-them from the formal propositions of \S\ref{sec:formulation}); each is
-stated with its falsifier.
+on. These are \emph{empirical} propositions, labeled P1--P6 to distinguish
+them from the formal propositions of \S\ref{sec:formulation}, and each is
+stated with the observation that would falsify it. Before stating them, we
+declare where they apply. The boxed scope conditions below are part of the
+theory's content, not fine print: they specify the leaders, roles, and
+observation regimes for which P1--P6 are claims at all, and they follow
+directly from the assumptions and robustness analysis of
+\S\ref{sec:formulation}.
 
 \begin{center}
 \fbox{\begin{minipage}{0.92\linewidth}
@@ -168,38 +199,43 @@ silent, not merely weakened.
 \end{center}
 
 \begin{description}
-\item[P1 (Single attractor).] Individual vitality--capital trajectories
-converge to a single interior steady state; transients are damped spirals.
-\emph{Falsifier:} persistent oscillation, or evidence of multistability
-(distinct long-run outcomes for similar leaders in similar roles that are
-attributable to initial conditions rather than parameters).
+\item[P1 (Single attractor).] We propose that individual vitality--capital
+trajectories converge to a single interior steady state, with
+damped-spiral transients. \emph{Falsifier:} persistent oscillation, or
+evidence of multistability---distinct long-run outcomes for similar
+leaders in similar roles that are attributable to initial conditions
+rather than parameters.
 
-\item[P2 (Regime governor).] The low-vitality regime occurs if and only if
-the depreciation--accumulation ratio $\mu/\alpha$ is small relative to the
-threshold implied by \eqref{eq:vstar}. \emph{Falsifier:} regime membership
-uncorrelated with the depreciation/accumulation ratio across leaders.
+\item[P2 (Regime governor).] We propose that the low-vitality regime
+occurs if and only if the depreciation--accumulation ratio $\mu/\alpha$ is
+small relative to the threshold implied by \eqref{eq:vstar}.
+\emph{Falsifier:} regime membership uncorrelated with the
+depreciation/accumulation ratio across leaders.
 
-\item[P3 (Scope absorption).] Reducing the scope coupling $\beta$ alone
-does not durably raise equilibrium vitality; instead, capital re-expands
-until the product $\beta C^{\eta}$ is restored. \emph{Falsifier:} a durable
-vitality gain from coupling reduction alone, with $\beta C^{*}$ \emph{not}
-conserved.
+\item[P3 (Scope absorption).] We propose that reducing the scope coupling
+$\beta$ alone does not durably raise equilibrium vitality: capital
+re-expands until the product $\beta C^{\eta}$ is restored.
+\emph{Falsifier:} a durable vitality gain from coupling reduction alone,
+with $\beta C^{*}$ \emph{not} conserved.
 
-\item[P4 (Boundary of P3).] The magnitude of $\dd V^{*}/\dd\beta$ grows
-with the non-separability of the empirical drain kernel; where drain
-saturates in complexity (Hill-type), scope reduction regains leverage.
-This proposition marks the edge of P3's validity rather than extending it.
+\item[P4 (Boundary of P3).] We propose that the magnitude of
+$\dd V^{*}/\dd\beta$ grows with the non-separability of the empirical
+drain kernel, so that where drain saturates in complexity (Hill-type),
+scope reduction regains leverage. This proposition marks the edge of P3's
+validity rather than extending it. \emph{Falsifier:} scope-reduction
+effects unrelated to the curvature of the estimated drain kernel.
 
-\item[P5 (Carrying capacity statics).] The maximum sustainable capital
-$\Cmax$ falls with the coupling $\beta$ and the energetic cost $\delta$,
-and rises with recovery capacity $R$, per \eqref{eq:cmax-statics}.
-\emph{Falsifier:} observed sustainable-capital ceilings that do not move
-with recovery capacity, or that rise with coupling.
+\item[P5 (Carrying-capacity statics).] We propose that the maximum
+sustainable capital $\Cmax$ falls with the coupling $\beta$ and the
+energetic cost $\delta$, and rises with recovery capacity $R$, per
+\eqref{eq:cmax-statics}. \emph{Falsifier:} observed sustainable-capital
+ceilings that do not move with recovery capacity, or that rise with
+coupling.
 
-\item[P6 (Intervention ordering).] Recovery-side interventions (raising
-$R$; lowering $\mu$; raising $\alpha$) raise equilibrium vitality; scope
-redesign (lowering $\beta$) does not. \emph{Falsifier:} a well-identified
-field comparison in which scope redesign outperforms recovery support on
-long-run vitality. This is the theory's killer test
-(\S\ref{sec:roadmap}).
+\item[P6 (Intervention ordering).] We propose that recovery-side
+interventions---raising $R$, lowering $\mu$, raising $\alpha$---raise
+equilibrium vitality, while scope redesign (lowering $\beta$) does not.
+\emph{Falsifier:} a well-identified field comparison in which scope
+redesign outperforms recovery support on long-run vitality. This is the
+theory's killer test (\S\ref{sec:roadmap}).
 \end{description}
