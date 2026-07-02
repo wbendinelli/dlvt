@@ -8,7 +8,7 @@ All figures are saved as both PDF (vector, for LaTeX) and PNG (raster, 300 dpi).
 Figure list
 -----------
 fig1 : Temporal evolution of V, C, O and depletion ratio Γ
-fig2 : Three outcome scenarios — sustainable, zombie, collapse
+fig2 : Three outcome scenarios — sustainable, low-vitality, collapse
 fig3 : Phase portrait with nullclines, trajectories, and equilibria
 fig4 : Bifurcation diagrams — C* and V* vs β, and C* vs R
 fig5 : Leadership impact — DLVT vs Human Capital Theory (Becker)
@@ -123,7 +123,7 @@ def fig1(output_dir='figures/', p=None):
 # ── Figure 2: Three Scenarios ─────────────────────────────────────────────────
 
 def fig2(output_dir='figures/'):
-    """Three outcome scenarios: sustainable, zombie, collapse."""
+    """Three outcome scenarios: sustainable, low-vitality, collapse."""
     fig, axes = plt.subplots(1, 3, figsize=(15, 5.2))
 
     # (a) Sustainable
@@ -142,7 +142,7 @@ def fig2(output_dir='figures/'):
     ax.set_xlabel('Time'); ax.set_ylabel('Level')
     ax.legend(fontsize=9); ax.grid(True, alpha=0.15)
 
-    # (b) Zombie
+    # (b) Low-vitality
     p_z = make_params(beta=0.25)
     t2, V2, C2, *_ = simulate(p_z, T=200)
     eq_z = find_interior_equilibria(p_z)
@@ -157,8 +157,8 @@ def fig2(output_dir='figures/'):
     if eq_z:
         ax.axhline(eq_z[0]['V'], color='darkorange', ls=':', alpha=0.5)
         ax.text(t2[-1]*0.55, eq_z[0]['V']-0.7,
-                f"$V^*={eq_z[0]['V']:.1f}$ (zombie)", fontsize=9, color='darkorange')
-    ax.set_title('(b) Zombie Equilibrium', fontsize=12)
+                f"$V^*={eq_z[0]['V']:.1f}$ (low-vitality)", fontsize=9, color='darkorange')
+    ax.set_title('(b) Low-Vitality Equilibrium', fontsize=12)
     ax.set_xlabel('Time'); ax.set_ylabel('Level')
     ax.legend(fontsize=9); ax.grid(True, alpha=0.15)
 
@@ -242,7 +242,7 @@ def fig3(output_dir='figures/'):
     ax.axhline(Vstrat, color='purple', ls='-.', alpha=0.4, lw=1.5)
     ax.axhspan(0, Vstrat, alpha=0.04, color='red')
     ax.text(1, Vstrat+0.2, r'$V_{\mathrm{strategic}}$', fontsize=10, color='purple')
-    ax.text(1, 1.5, 'ZOMBIE ZONE', fontsize=9, color='red', alpha=0.5, weight='bold')
+    ax.text(1, 1.5, 'LOW-VITALITY ZONE', fontsize=9, color='red', alpha=0.5, weight='bold')
 
     ax.set_xlabel('Career Capital $C$')
     ax.set_ylabel('Vitality $V$')
@@ -396,7 +396,7 @@ def fig6(output_dir='figures/'):
 # ── Figure 7: Regime Map ──────────────────────────────────────────────────────
 
 def fig7(output_dir='figures/'):
-    """Parameter-space regime map in (β, δ): sustainable / zombie / collapse-prone."""
+    """Parameter-space regime map in (β, δ): sustainable / low-vitality / collapse-prone."""
     from .analysis import classify_regime
 
     betas  = np.linspace(0.02, 0.8,  100)
@@ -414,7 +414,7 @@ def fig7(output_dir='figures/'):
     ax.contour(betas, deltas, Z, levels=[0.5, 1.5],
                colors='white', linewidths=2, linestyles='-')
 
-    for val, label in [(0, 'SUSTAINABLE'), (1, 'ZOMBIE'), (2, 'COLLAPSE-\nPRONE')]:
+    for val, label in [(0, 'SUSTAINABLE'), (1, 'LOW-VITALITY'), (2, 'COLLAPSE-\nPRONE')]:
         ys, xs = np.where(Z == val)
         if len(xs):
             cx = betas[int(np.median(xs))]
@@ -425,7 +425,7 @@ def fig7(output_dir='figures/'):
     Vstrat = V_STRATEGIC_FRACTION * 10.0  # default Vmax
     legend_elements = [
         Patch(facecolor='#2ecc71', label=f'Sustainable ($V^* \\geq {Vstrat:.0f}$)'),
-        Patch(facecolor='#f39c12', label=f'Zombie ($0 < V^* < {Vstrat:.0f}$)'),
+        Patch(facecolor='#f39c12', label=f'Low-vitality ($0 < V^* < {Vstrat:.0f}$)'),
         Patch(facecolor='#e74c3c', label='Collapse-prone (no stable eq.)'),
     ]
     ax.legend(handles=legend_elements, loc='upper left', fontsize=9)
