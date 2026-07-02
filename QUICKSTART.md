@@ -110,7 +110,7 @@ from dlvt.analysis import classify_regime, is_zombie
 
 p = make_params()
 regime = classify_regime(p)
-print(f"Regime: {regime}")  # 'sustainable', 'zombie', or 'collapse'
+print(f"Regime: {regime}")  # 'sustainable', 'zombie', or 'collapse-prone'
 
 # Check if equilibrium is "zombie" (exhausted)
 p_zombie = make_params(beta=0.8)

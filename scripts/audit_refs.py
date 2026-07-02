@@ -11,7 +11,14 @@ Parses references.bib, queries Crossref for each entry, classifies each as:
   BOOK_SKIP    - book/techreport without DOI (Crossref coverage thin); flagged for manual check
 
 Outputs JSON to stdout. Polite to Crossref: 1 req/sec, User-Agent with email.
+
+Usage
+-----
+    python scripts/audit_refs.py                      # full Crossref audit
+    python scripts/audit_refs.py --offline            # parse/validate only, no network
+    python scripts/audit_refs.py --bib path/to.bib    # audit another file
 """
+import argparse
 import json
 import re
 import sys
@@ -20,7 +27,9 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-BIB = Path("/sessions/great-loving-ride/mnt/dynamic-leadership-vitality-theory/references.bib")
+# Repo-relative default (the previous hardcoded absolute path broke on any
+# machine other than the original author's session container).
+DEFAULT_BIB = Path(__file__).resolve().parents[1] / "references.bib"
 UA = "DLVT-AuditBot/1.0 (mailto:wbendinelli@gmail.com)"
 SLEEP = 0.4  # seconds between requests, polite
 
@@ -166,9 +175,28 @@ def title_similarity(a, b):
 
 
 def main():
-    text = BIB.read_text(encoding="utf-8")
+    parser = argparse.ArgumentParser(description="Audit references.bib against Crossref.")
+    parser.add_argument("--bib", type=Path, default=DEFAULT_BIB,
+                        help=f"Path to the .bib file (default: {DEFAULT_BIB})")
+    parser.add_argument("--offline", action="store_true",
+                        help="Parse and validate structure only; skip all Crossref queries.")
+    args = parser.parse_args()
+
+    text = args.bib.read_text(encoding="utf-8")
     entries = parse_bib(text)
     print(f"# parsed {len(entries)} entries", file=sys.stderr)
+
+    # Structural validation (always, including offline mode): duplicate keys
+    # and missing mandatory fields are reported regardless of network access.
+    seen = set()
+    for e in entries:
+        key = e["__key__"]
+        if key in seen:
+            print(f"# DUPLICATE KEY: {key}", file=sys.stderr)
+        seen.add(key)
+        if not e.get("title"):
+            print(f"# MISSING TITLE: {key}", file=sys.stderr)
+
     results = []
     for i, e in enumerate(entries, 1):
         key = e["__key__"]
@@ -187,7 +215,10 @@ def main():
             "suggested_doi": None,
             "suggested_title": None,
         }
-        if doi:
+        if args.offline:
+            rec["status"] = "PARSED_OFFLINE"
+            rec["note"] = "structure OK; Crossref check skipped (--offline)"
+        elif doi:
             ok, err, ctitle = check_doi(doi)
             time.sleep(SLEEP)
             if ok:

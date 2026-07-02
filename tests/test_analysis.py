@@ -305,18 +305,213 @@ def test_basin_sweep_target_matches_zombie_equilibrium(basin_report):
     assert C_target == pytest.approx(32.0337, abs=5e-3)
 
 
-def test_linear_drain_gamma1_escapes_zombie_regime():
-    """Robustness check (§3.10): at gamma=1 the zombie equilibrium disappears.
+def test_linear_drain_gamma1_yields_sustainable_equilibrium():
+    """Robustness check (§3.10, corrected): at gamma=1 the equilibrium is SUSTAINABLE.
 
-    This is the 'linear drain' alternative specification that establishes
-    nonlinear complexity scaling as a *necessary* condition for the theory.
+    Earlier drafts said the equilibrium "disappears" at gamma=1. That was wrong:
+    a unique stable interior equilibrium persists, but with V* ≈ 8.56 — well above
+    the strategic threshold. Linear drain *converts the low-vitality (zombie)
+    equilibrium into a sustainable one*; nonlinear complexity scaling (gamma > 1)
+    is necessary for the low-vitality regime, not for the existence of an attractor.
     """
     p = make_params(gamma=1.0)
-    eqs = find_interior_equilibria(p, C_max=1000.0, n_scan=12000)
-    stable_zombies = [
-        e for e in eqs if e.get("zombie") and e.get("stable")
-    ]
-    assert len(stable_zombies) == 0, (
-        "Linear drain should eliminate stable zombie equilibria; "
-        "got {}".format(stable_zombies)
+    eqs = find_interior_equilibria(p, n_scan=12000)
+    assert len(eqs) == 1, f"expected unique interior equilibrium, got {len(eqs)}"
+    eq = eqs[0]
+    assert eq["stable"] is True
+    assert eq["zombie"] is False, "gamma=1 equilibrium should be sustainable"
+    assert eq["V"] == pytest.approx(8.559, abs=0.02)
+    assert eq["V"] > V_STRATEGIC_FRACTION * p["Vmax"]
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# Independent verification checks (not pinned to the solver's own output)
+#
+# Each test below checks the code against a source of truth *external* to
+# find_interior_equilibria itself: a closed-form root, a second integrator,
+# a hand-derived boundary, or an analytic sign condition evaluated directly.
+# ────────────────────────────────────────────────────────────────────────────
+
+
+def test_equilibrium_matches_eps_to_zero_closed_form_oracle():
+    """External oracle: the ε → 0 equilibrium has a closed form (γ=2, η=1).
+
+    Substituting the C-nullcline V = (μ/α)(1+φO) into the ε → 0 V-nullcline
+    R(1 − V/Vmax) = δO² gives the quadratic
+
+        δ·O² + (R/Vmax)(μφ/α)·O + R((μ/α)/Vmax − 1) = 0,
+
+    whose positive root at baseline is O* = 8.93313, hence V* = 4.67994 and
+    C* = 31.7325 (β·C* = 7.93313). The numerical solver at ε = 1e-6 must
+    reproduce this closed form — a check fully independent of the scan/brentq
+    pipeline that produced the paper's reference numbers.
+    """
+    p = make_params(eps=1e-6)
+    a = p["delta"]
+    b = (p["R"] / p["Vmax"]) * (p["mu"] * p["phi"] / p["alpha"])
+    c = p["R"] * ((p["mu"] / p["alpha"]) / p["Vmax"] - 1.0)
+    O_star = (-b + np.sqrt(b * b - 4 * a * c)) / (2 * a)
+    V_star = (p["mu"] / p["alpha"]) * (1.0 + p["phi"] * O_star)
+    C_star = (O_star - p["O0"]) / p["beta"]
+
+    assert O_star == pytest.approx(8.93313, abs=1e-4)
+    assert V_star == pytest.approx(4.67994, abs=1e-4)
+
+    eqs = find_interior_equilibria(p, n_scan=16000)
+    assert len(eqs) == 1
+    assert eqs[0]["V"] == pytest.approx(V_star, abs=1e-3)
+    assert eqs[0]["C"] == pytest.approx(C_star, abs=1e-2)
+
+
+def test_equilibrium_confirmed_by_independent_stiff_integrator():
+    """External oracle: an implicit (Radau) integration lands on the equilibrium.
+
+    The package integrates with RK45 everywhere; this check uses a different
+    method family (implicit Runge–Kutta, Radau IIA) so that solver-specific
+    artifacts cannot silently pin both the equilibrium finder and the tests.
+    """
+    from scipy.integrate import solve_ivp
+    from dlvt.model import dlvt_system
+
+    p = make_params()
+    sol = solve_ivp(
+        dlvt_system, [0.0, 400.0], [8.0, 5.0], args=(p,),
+        method="Radau", rtol=1e-9, atol=1e-11,
     )
+    assert sol.success
+    assert sol.y[0, -1] == pytest.approx(4.7025, abs=1e-2)
+    assert sol.y[1, -1] == pytest.approx(32.034, abs=1e-1)
+
+
+def draw_f(rng, base):
+    """Log-uniform ±2× draw around a base value."""
+    return float(base * np.exp(rng.uniform(np.log(0.5), np.log(2.0))))
+
+
+def test_uniqueness_no_multiple_equilibria_across_random_parameters():
+    """Theorem 2a witness: at most one interior equilibrium, all regimes.
+
+    dΦ/dO < 0 term-by-term along the C-nullcline implies at most one interior
+    equilibrium in the whole positive orthant for every positive parameter
+    vector. Sweep 100 random log-uniform parameter draws (±2×) and assert no
+    draw ever produces two interior equilibria.
+    """
+    rng = np.random.default_rng(20260701)
+
+    for _ in range(100):
+        p = make_params(
+            R=draw_f(rng, 3.0), delta=draw_f(rng, 0.02), gamma=draw_f(rng, 2.0),
+            O0=draw_f(rng, 1.0), beta=draw_f(rng, 0.25), eta=draw_f(rng, 1.0),
+            alpha=draw_f(rng, 0.1), phi=draw_f(rng, 0.15), mu=draw_f(rng, 0.2),
+        )
+        eqs = find_interior_equilibria(p, n_scan=4000)
+        assert len(eqs) <= 1, (
+            f"multiple interior equilibria found — contradicts Theorem 2a: "
+            f"params={p}, eqs={[(e['V'], e['C']) for e in eqs]}"
+        )
+
+
+def test_no_hopf_trace_negative_at_every_interior_equilibrium():
+    """Theorem 2b witness: trace(J) < 0 at every interior equilibrium.
+
+    At any interior equilibrium dC/dt = 0 forces αV/(1+φO) = μ, which makes
+    J[1,1] = −αCVφ(dO/dC)/(1+φO)² < 0, while J[0,0] < 0 identically — so no
+    Hopf bifurcation exists anywhere in parameter space. Evaluate the trace
+    directly (bypassing jacobian_eigenvalues) on random draws.
+    """
+    rng = np.random.default_rng(8008)
+    checked = 0
+    for _ in range(100):
+        p = make_params(
+            R=draw_f(rng, 3.0), delta=draw_f(rng, 0.02), gamma=draw_f(rng, 2.0),
+            O0=draw_f(rng, 1.0), beta=draw_f(rng, 0.25), eta=draw_f(rng, 1.0),
+            alpha=draw_f(rng, 0.1), phi=draw_f(rng, 0.15), mu=draw_f(rng, 0.2),
+        )
+        for eq in find_interior_equilibria(p, n_scan=4000):
+            V, C = eq["V"], eq["C"]
+            O = p["O0"] + p["beta"] * C ** p["eta"]
+            dOdC = p["beta"] * p["eta"] * C ** (p["eta"] - 1.0)
+            J00 = (-p["R"] / p["Vmax"]
+                   - p["delta"] * O ** p["gamma"] * p["eps"] / (V + p["eps"]) ** 2)
+            J11 = (p["alpha"] * V / (1.0 + p["phi"] * O)
+                   - p["alpha"] * C * V * p["phi"] * dOdC / (1.0 + p["phi"] * O) ** 2
+                   - p["mu"])
+            assert J00 + J11 < 0.0, (
+                f"trace ≥ 0 at interior equilibrium — Hopf candidate: params={p}"
+            )
+            checked += 1
+    assert checked >= 50, f"too few interior equilibria sampled ({checked})"
+
+
+def test_mu_alpha_critical_boundary_at_baseline_phi():
+    """Hand-derived regime boundary: (μ/α)_crit ≈ 2.163 at baseline φ.
+
+    The regime label is governed by μ/α: V* = (μ/α)(1+φO*). Holding α = 0.1,
+    μ = 0.2163 puts V* at the threshold (5.0006), μ = 0.20 (baseline) is
+    'zombie', and μ = 0.25 is 'sustainable' with V* ≈ 5.58. This pins the
+    calibration-dependence of the headline classification: the baseline sits
+    ~8% from the flip.
+    """
+    from dlvt.analysis import classify_regime
+
+    assert classify_regime(make_params(mu=0.20)) == "zombie"
+    assert classify_regime(make_params(mu=0.25)) == "sustainable"
+
+    eq_at_crit = find_interior_equilibria(make_params(mu=0.2163))[0]
+    assert eq_at_crit["V"] == pytest.approx(5.0, abs=0.01)
+
+    eq_sust = find_interior_equilibria(make_params(mu=0.25))[0]
+    assert eq_sust["V"] == pytest.approx(5.58, abs=0.01)
+
+
+def test_small_beta_equilibrium_found_with_default_window():
+    """Regression for the fixed-window bug (M6): β < 0.066 must not be mislabeled.
+
+    With the legacy fixed default C_max = 120, C*(β) ≈ 8.008/β exceeded the
+    window for β < 0.066, find_interior_equilibria returned [], and
+    classify_regime mislabeled the regime as 'collapse-prone'. The corrected
+    default derives the window from C_trap ∝ 1/β, so the equilibrium is found
+    at every β and scope absorption holds: V* = 4.7025 with β·C* conserved.
+    """
+    from dlvt.analysis import classify_regime
+
+    for beta in (0.05, 0.02, 0.01):
+        p = make_params(beta=beta)
+        eqs = find_interior_equilibria(p)
+        assert len(eqs) == 1, f"equilibrium missed at beta={beta}"
+        eq = eqs[0]
+        assert eq["V"] == pytest.approx(4.7025, abs=5e-3)
+        assert beta * eq["C"] == pytest.approx(8.008, abs=5e-3)
+        assert classify_regime(p) == "zombie", (
+            f"beta={beta} mislabeled as {classify_regime(p)!r} — "
+            f"fixed-window bug regression"
+        )
+
+
+def test_trapping_capital_bound_and_carrying_capacity_are_distinct():
+    """M2 regression: C_trap (102.67) ≠ C*_max (44.99), and only C_trap traps.
+
+    The rectangle [0, Vmax] × [0, C*_max] used in earlier drafts LEAKS: at
+    C = C*_max and V = Vmax, dC/dt > 0. The corrected ceiling C_trap satisfies
+    dC/dt < 0 for all V ∈ [0, Vmax] at any C > C_trap. Both facts are checked
+    directly on the RHS, independent of the certificate function.
+    """
+    from dlvt.model import dlvt_system
+    from dlvt.analysis import trapping_capital_bound
+
+    p = make_params()
+    c_trap = trapping_capital_bound(p)
+    cc = carrying_capacity(p)
+
+    assert c_trap == pytest.approx(102.667, abs=1e-2)
+    assert cc == pytest.approx(44.99, abs=0.05)
+    assert c_trap > cc
+
+    # The old rectangle leaks at its top edge:
+    _, dC_leak = dlvt_system(0.0, [p["Vmax"], cc], p)
+    assert dC_leak > 0.0, "old C*_max ceiling should leak (dC/dt > 0)"
+
+    # The corrected ceiling traps for every V in [0, Vmax]:
+    for V in np.linspace(0.0, p["Vmax"], 21):
+        _, dC = dlvt_system(0.0, [V, 1.001 * c_trap], p)
+        assert dC < 0.0, f"C_trap ceiling fails to trap at V={V}"

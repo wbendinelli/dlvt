@@ -32,7 +32,30 @@ The core model couples vitality recovery (logistic saturation) with complexity-d
 
 The smooth barrier V/(V + ε) ensures positive invariance of V for ε > 0.
 Theoretical results use the ε → 0 limit; numerical integration uses ε = 0.1 for stability
-(this causes < 2% shift in equilibrium values compared to ε → 0).
+(this causes < 2% shift in equilibrium values compared to ε → 0; e.g. the equilibrium
+V* = 4.7025 at ε = 0.1 versus V* = 4.6799 in the ε → 0 closed form, and the invariant
+β·C* = 8.008 versus 7.933 — analytical constants should always state which ε they refer to).
+
+Depletion dynamics (corrected Theorem 1)
+----------------------------------------
+Vitality can NEVER reach zero: dV/dt|_{V=0} = R > 0 for any ε ≥ 0, so V = 0 is repelling
+and V(t) > 0 for all t > 0. The correct depletion statements are:
+
+(a) *Finite-time band entry* (exogenous overload): if complexity is held at O(t) ≥ Ω with
+    Ω^γ > 2R/δ, then while V ≥ ε, dV/dt ≤ R − δΩ^γ/2 < 0, so V enters the band {V < ε}
+    no later than
+        T* = t₀ + (V₀ − ε) / (δΩ^γ/2 − R).
+    (Baseline example: Ω = 30 gives T* ≈ 0.94 time units from V₀ = 8.)
+
+(b) *Exponential convergence to a positive quasi-equilibrium* otherwise: for a frozen
+    complexity level O, V(t) converges exponentially to V_qe(O) > 0, the positive root of
+        (R/Vmax)·V² − (R − Rε/Vmax − δO^γ)·V − Rε = 0.
+    The small-V approximation V_qe ≈ Rε/(δO^γ) is valid only for large O; at O = O₀ = 1
+    the true quasi-equilibrium is V_qe ≈ 9.93 — near Vmax, not near zero.
+
+Earlier drafts stated "vitality reaches the ε-neighborhood of zero in finite time" under
+any persistent deficit Γ > 1; that claim is false as stated (V converges to V_qe > 0,
+which is small only when the deficit is large) and is replaced by (a)+(b) above.
 
 Default Parameters (Table 1)
 ----------------------------
@@ -222,6 +245,13 @@ def dlvt_exogenous(t: float, y: List[float], p: Dict[str, float],
     capital trajectory (e.g., a promotion ramp or a sudden scope expansion).
     This is useful for scenario analysis where organisational decisions
     drive capital changes independent of impact feedback.
+
+    Depletion behaviour (corrected Theorem 1): even when C_func drives
+    O(t) → ∞, vitality remains strictly positive — V = 0 is repelling
+    because dV/dt|_{V=0} = R > 0. What overload produces is *finite-time
+    entry into the band* {V < ε} (with the explicit bound T* given in the
+    module docstring) followed by exponential tracking of the positive
+    quasi-equilibrium V_qe(O(t)), not depletion to zero.
 
     Parameters
     ----------

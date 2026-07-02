@@ -81,9 +81,9 @@ FIGURES = {
         'output_name': 'fig7_regime_map',
     },
     '8': {
-        'name': 'Bifurcation with Hysteresis',
-        'description': 'β parameter scan, hysteresis detection',
-        'method': 'scripts.fig8_bifurcation_hysteresis.main',
+        'name': 'Scan-Window Artifact & Scope Absorption',
+        'description': 'β sweep: legacy fixed-window artifact vs corrected flat V*(β)',
+        'method': 'scripts.fig8_bifurcation_hysteresis.fig8_scan_window_artifact',
         'script': str(SCRIPT_DIR / 'fig8_bifurcation_hysteresis.py'),
     },
     '9': {

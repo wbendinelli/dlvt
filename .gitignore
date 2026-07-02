@@ -86,3 +86,14 @@ figures/*.png
 # Distribution artifacts
 dist/
 *.whl
+
+# LaTeX build artifacts (paper/)
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/main.pdf
+paper/compile.log
+figures/*.txt
