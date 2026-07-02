@@ -7,24 +7,12 @@
 % at the repository root; the parameter-recovery prerequisite is executable in
 % the companion module dlvt/recovery.py).
 %
-% All \citep/\citet keys below are verified against ../references.bib.
-%
-% % citations to add (instruments/methods described in text WITHOUT citation
-% % because no key exists in references.bib yet; add before submission):
-% %   - Podsakoff et al. (2003/2012), common-method bias and procedural remedies
-% %   - Vandenberg & Lance (2000), longitudinal measurement invariance
-% %   - Lindell & Whitney (2001), marker-variable technique
-% %   - Reise (2012), bifactor modeling
-% %   - Nesselroade (1991) / Sliwinski (2008), measurement-burst designs
-% %   - Bell (1953) / Duncan et al., accelerated longitudinal designs
-% %   - Beal (2015), experience-sampling methods in organizational research
-% %   - Voelkle et al. (2012) / Driver, Oud & Voelkle (2017), continuous-time
-% %     SEM and the ctsem package
-% %   - Carpenter et al. (2017), Stan
-% %   - Lakens (2017), equivalence testing / TOST and SESOI justification
-% %   - Rizopoulos (2012), joint longitudinal--survival (shared-parameter) models
-% %   - Hahn et al. (2011), randomized recovery-training intervention
-% %   - a multi-source (360-degree) leadership-assessment methods reference
+% All \citep/\citet keys below are verified against ../references.bib,
+% including the methodology references added in v2.1 (Podsakoff 2003,
+% Vandenberg & Lance 2000, Lindell & Whitney 2001, Reise 2012, Sliwinski
+% 2008, Bell 1953, Beal 2015, Voelkle et al. 2012, Driver et al. 2017,
+% Carpenter et al. 2017, Lakens 2017, Rizopoulos 2012, Hahn et al. 2011,
+% Bracken et al. 2001).
 % ============================================================================
 \section{An Empirical Program for Testing DLVT}
 \label{sec:empirical}
@@ -95,8 +83,8 @@ quarterly \\
 \addlinespace
 Impact $I$ &
 Multi-source (360-degree) leadership-effectiveness ratings from
-supervisor, peer, and subordinate panels; objective unit performance
-(unit P\&L or KPI attainment, unit engagement)
+supervisor, peer, and subordinate panels \citep{bracken2001multisource};
+objective unit performance (unit P\&L or KPI attainment, unit engagement)
 \citep{hambrick2007upper,edmans2016executive} &
 360 ratings semi-annually; objective unit indicators quarterly from
 archival systems, never self-reported \\
@@ -126,9 +114,9 @@ span, centrality, reputation---the assets that generate complexity load) and
 \emph{assessed competence} (the assets that generate impact). The
 distinction matters because promotion systems can raise status while
 competence fit falls \citep{pluchino2010peter}. We therefore commit, in
-advance, to a rival measurement model: a bifactor CFA with a general
-capital factor plus status and competence group factors, estimated at every
-wave. If the general factor is weak (e.g., explained common variance below
+advance, to a rival measurement model: a bifactor CFA
+\citep{reise2012bifactor} with a general capital factor plus status and
+competence group factors, estimated at every wave. If the general factor is weak (e.g., explained common variance below
 a pre-declared threshold) or the two group factors show divergent
 trajectories, the scalar-$C$ specification is rejected \emph{as
 measurement}, and the dynamic model must be re-derived with a two-stock
@@ -150,16 +138,17 @@ performance \citep{hambrick2007upper,edmans2016executive}.
 
 \paragraph{Longitudinal invariance and common-method defenses.}
 Two requirements apply to every construct. First, \emph{longitudinal
-measurement invariance}: configural, metric, and scalar invariance across
-waves must be established (or partial invariance explicitly modeled) before
-latent trajectories are interpreted as state dynamics; without scalar
-invariance, an apparent damped spiral can be manufactured by drifting item
-intercepts. Second, \emph{common-method-bias defenses}: the design separates
-sources ($V$ self-reported; $I$ other-reported and archival; $C$ and the
-structural half of $O$ archival), separates measurement occasions (ESM
-bursts versus quarterly waves), and includes a theoretically neutral marker
-variable in every wave so that method variance can be partialled in
-sensitivity analyses. Because the central predictions are
+measurement invariance} \citep{vandenberg2000invariance}: configural,
+metric, and scalar invariance across waves must be established (or partial
+invariance explicitly modeled) before latent trajectories are interpreted
+as state dynamics; without scalar invariance, an apparent damped spiral can
+be manufactured by drifting item intercepts. Second,
+\emph{common-method-bias defenses} \citep{podsakoff2003common}: the design
+separates sources ($V$ self-reported; $I$ other-reported and archival; $C$
+and the structural half of $O$ archival), separates measurement occasions
+(ESM bursts versus quarterly waves), and includes a theoretically neutral
+marker variable \citep{lindell2001marker} in every wave so that method
+variance can be partialled in sensitivity analyses. Because the central predictions are
 \emph{within-person dynamic signatures}---decay rates, phase relations,
 conservation of $\beta C^{\eta}$---rather than cross-sectional correlations,
 stable individual response styles difference out; but occasion-specific
@@ -182,7 +171,8 @@ can resolve both ends of a $15\times$ timescale separation economically. The
 design therefore has two interlocking clocks:
 
 \begin{itemize}
-\item \emph{Daily ESM bursts for the fast $V$ dynamics.} Two working weeks
+\item \emph{Daily ESM bursts for the fast $V$ dynamics}
+\citep{beal2015esm,sliwinski2008burst}. Two working weeks
 (10 working days) of daily short-form measurement (state SVS, REQ items,
 momentary load) once per quarter. Daily sampling oversamples the
 $1/R\approx0.33$-unit boundary layer by design and, by Nyquist logic,
@@ -211,8 +201,8 @@ is re-derived from pilot estimates rather than trusted a priori.
 
 \paragraph{Accelerated longitudinal structure.}
 Because equilibrium claims concern career horizons far longer than three
-years, the panel is \emph{accelerated}: participants are enrolled in
-staggered role-tenure cohorts (roughly $0$--$2$, $3$--$5$, $6$--$10$, and
+years, the panel is \emph{accelerated} \citep{bell1953convergence}:
+participants are enrolled in staggered role-tenure cohorts (roughly $0$--$2$, $3$--$5$, $6$--$10$, and
 $>\!10$ years in comparable executive roles), so that three calendar years
 of observation span two decades of career time under a convergence
 assumption. The convergence assumption---that cohorts trace segments of a
@@ -231,9 +221,10 @@ the single-attractor claim (P1's falsifier).
 Discrete-time cross-lagged models estimate lag-specific coefficients that
 change with the sampling interval and cannot express the model's actual
 claim, which is a drift field. Estimation therefore uses continuous-time
-structural equation modeling (ctsem-style Kalman filtering) or a Bayesian
-state-space model (Stan) whose drift is the \emph{exact} DLVT right-hand
-side of \eqref{eq:dVdt}--\eqref{eq:complexity}, with additive diffusion and
+structural equation modeling
+\citep{voelkle2012ctsem,driver2017ctsem} or a Bayesian
+state-space model in Stan \citep{carpenter2017stan} whose drift is the
+\emph{exact} DLVT right-hand side of \eqref{eq:dVdt}--\eqref{eq:complexity}, with additive diffusion and
 the measurement model of \S\ref{sec:emp-measurement} as the observation
 equation:
 \begin{align*}
@@ -338,7 +329,8 @@ delegation of units, interface pruning, span reduction---interventions
 that lower the coupling of the leader's capital to complexity load.
 (ii) \emph{Recovery support} ($R\uparrow$): protected restoration
 capacity---enforced detachment blocks, recovery training, sabbatical
-scheduling \citep{sonnentag2007recovery,davidson2010sabbatical}.
+scheduling \citep{sonnentag2007recovery,hahn2011recovery,
+davidson2010sabbatical}.
 (iii) \emph{Both}. (iv) \emph{Waitlist control}, receiving the recovery
 program after the endpoint.
 \item[Endpoint.] Primary endpoint at $12$--$18$ months post-randomization.
@@ -361,7 +353,8 @@ Corollary~\ref{cor:scope} ($\beta C^{*}=8.008$ at baseline,
 $\varepsilon=0.1$).
 \item[Informative null.] Because prediction (b) is a null at the endpoint,
 the analysis pre-declares a smallest effect size of interest (SESOI) and
-tests \emph{equivalence} of the $\beta\downarrow$-only arm to control at
+tests \emph{equivalence} \citep{lakens2017equivalence} of the
+$\beta\downarrow$-only arm to control at
 $12$--$18$ months, not merely non-significance. A null that falls inside
 the declared equivalence bounds supports P3; an uninstrumented
 non-significant difference would support nothing.
@@ -409,7 +402,8 @@ survivors and biases $V^{*}$ upward
 is therefore modeled, not deleted: a competing-risks survival sub-model
 (voluntary exit, involuntary exit, internal move out of scope) is estimated
 jointly with the state-space model, with the hazard depending on the latent
-$V$ trajectory (a shared-parameter structure). This turns a threat into a
+$V$ trajectory (a shared-parameter structure;
+\citealp{rizopoulos2012joint}). This turns a threat into a
 bonus test: DLVT predicts exit hazard concentrated where the depletion
 ratio \eqref{eq:gamma-ratio} exceeds one and during the transient trough of
 the damped spiral, and a hazard profile unrelated to latent vitality would
