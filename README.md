@@ -6,7 +6,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 **Author:** William Bendinelli
-**Paper:** *Dynamic Leadership Vitality Theory: A Closed-Form Capability-Trap Model of Leader Vitality and Career Capital* (working paper, 2026 — see [`paper/`](paper/))
+**Paper:** *Dynamic Leadership Vitality Theory: A Closed-Form Capability-Trap Model of Leader Vitality and Career Capital* (working paper, 2026 — manuscript in the canonical [dynamic-leadership-vitality-theory](https://github.com/wbendinelli/dynamic-leadership-vitality-theory) repository; this package is code-only)
 **Target venue:** *Computational and Mathematical Organization Theory* or *Nonlinear Dynamics, Psychology, and Life Sciences*
 
 ---
@@ -229,7 +229,6 @@ dlvt/
 │   ├── analysis.py           # Equilibria, stability, bifurcation, regimes
 │   ├── nondimensional.py     # Effective parameters, elasticities, sensitivity
 │   └── figures.py            # Publication figures 1–7
-├── paper/                    # Manuscript (LaTeX): chapters + appendices A1–A10
 ├── tests/                    # Pinning + independent verification tests
 │   ├── test_model.py         # Model numerics, simulation, positive invariance
 │   ├── test_analysis.py      # Equilibria, stability, regimes, external oracles

@@ -70,7 +70,7 @@ unchanged.
   integrator family (Radau), hand-derived $(\mu/\alpha)_{\mathrm{crit}}$
   boundary, direct trapping/leaking checks, random-parameter uniqueness and
   trace-sign sweeps, small-β regression for the fixed-window bug.
-- **`paper/` manuscript skeleton** (LaTeX): chapters and appendices A1–A10
+- **Manuscript** (LaTeX): the paper skeleton introduced in v2.1.0 now lives in the canonical [dynamic-leadership-vitality-theory](https://github.com/wbendinelli/dynamic-leadership-vitality-theory) repository; this package is code-only.
   with the corrected and strengthened statements — resolves the previously
   dangling §/appendix references in docstrings and tests.
 - **CI test workflow** (`.github/workflows/tests.yml`): pytest on Python
