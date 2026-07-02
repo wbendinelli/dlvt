@@ -6,9 +6,11 @@
 
 Appendix ↔ code: A1 `test_model.py` (invariance tests); A4–A6 `test_analysis.py` (equilibria, Jacobian, carrying capacity); A7 `find_regularization_branch`; A8 `estimate_bifurcation_interval`; A9 epsilon ladder; A10 `bendixson_dulac_certificate` + `basin_of_attraction_sweep`.
 
+Section 6 (empirical program) maps to the draft pre-registration in `../prereg/PREREGISTRATION.md` and to the companion modules `dlvt/stochastic.py` (noise robustness) and `dlvt/recovery.py` (parameter recovery / identifiability ridges; Figure 12).
+
 Figures 1–7 are read from `../figures/` (generate via `python3 scripts/run_all_figures.py --fig 1-7` at the repo root).
 
-Every numerical value quoted in the manuscript is pinned by `pytest tests/ -q` (38 tests).
+Every numerical value quoted in the manuscript is pinned by `pytest tests/ -q`.
 
 **Build** (from this directory; bibliography lives at `../references.bib`):
 

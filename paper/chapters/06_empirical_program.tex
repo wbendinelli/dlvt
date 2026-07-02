@@ -1,0 +1,454 @@
+% ============================================================================
+% Chapter 6 — An Empirical Program for Testing DLVT
+%
+% Materializes the validation roadmap of §\ref{sec:roadmap} as a concrete
+% measurement model, design, estimation strategy, identification plan, and
+% pre-registered killer test (draft pre-registration: prereg/PREREGISTRATION.md
+% at the repository root; the parameter-recovery prerequisite is executable in
+% the companion module dlvt/recovery.py).
+%
+% All \citep/\citet keys below are verified against ../references.bib.
+%
+% % citations to add (instruments/methods described in text WITHOUT citation
+% % because no key exists in references.bib yet; add before submission):
+% %   - Podsakoff et al. (2003/2012), common-method bias and procedural remedies
+% %   - Vandenberg & Lance (2000), longitudinal measurement invariance
+% %   - Lindell & Whitney (2001), marker-variable technique
+% %   - Reise (2012), bifactor modeling
+% %   - Nesselroade (1991) / Sliwinski (2008), measurement-burst designs
+% %   - Bell (1953) / Duncan et al., accelerated longitudinal designs
+% %   - Beal (2015), experience-sampling methods in organizational research
+% %   - Voelkle et al. (2012) / Driver, Oud & Voelkle (2017), continuous-time
+% %     SEM and the ctsem package
+% %   - Carpenter et al. (2017), Stan
+% %   - Lakens (2017), equivalence testing / TOST and SESOI justification
+% %   - Rizopoulos (2012), joint longitudinal--survival (shared-parameter) models
+% %   - Hahn et al. (2011), randomized recovery-training intervention
+% %   - a multi-source (360-degree) leadership-assessment methods reference
+% ============================================================================
+\section{An Empirical Program for Testing DLVT}
+\label{sec:empirical}
+
+The propositions of \S\ref{sec:propositions} and the roadmap of
+\S\ref{sec:roadmap} declare \emph{what} would falsify the theory. This
+section specifies \emph{how}: a measurement model mapping the four model
+quantities onto validated instruments (\S\ref{sec:emp-measurement}), a
+longitudinal design whose cadence is derived from the verified timescales of
+the baseline system (\S\ref{sec:emp-design}), an estimation strategy that
+targets the identifiable dimensionless groups rather than the raw parameter
+vector (\S\ref{sec:emp-estimation}), an identification plan that breaks the
+$\mu/\alpha$ and $R/\delta$ ridges with exogenous variation
+(\S\ref{sec:emp-identification}), the pre-registered field experiment that
+could kill the theory (\S\ref{sec:emp-killer}), and the threats and ethical
+constraints that bound the whole program (\S\ref{sec:emp-threats}). A draft
+pre-registration of the field experiment accompanies the repository
+(\texttt{prereg/PREREGISTRATION.md}).
+
+\subsection{Measurement model: from constructs to instruments}
+\label{sec:emp-measurement}
+
+The model quantities $V$, $C$, $O$, and $I$ are theoretical states, not
+observables; each requires an explicit auxiliary measurement theory.
+Table~\ref{tab:measurement} summarizes the proposed mapping; the paragraphs
+below record the substantive commitments and the places where measurement
+choices could themselves be wrong.
+
+\begin{table}[t]
+\centering
+\caption{Measurement model: construct $\to$ instrument $\to$ indicator and
+cadence. ESM = experience-sampling (daily burst) measurement; wave =
+quarterly panel wave (\S\ref{sec:emp-design}).}
+\label{tab:measurement}
+\vspace{0.4em}
+\small
+\begin{tabular}{p{0.16\linewidth}p{0.36\linewidth}p{0.38\linewidth}}
+\toprule
+Construct & Instrument & Indicators and cadence \\
+\midrule
+Vitality $V$ &
+Subjective Vitality Scale, state version
+\citep{ryan1997subjective,nix1999revitalization}; Recovery Experience
+Questionnaire \citep{sonnentag2007recovery} for recovery-side mediators;
+MBI emotional-exhaustion subscale \citep{maslach1981burnout} as
+discriminant marker &
+SVS in every daily ESM burst; REQ (detachment, relaxation, control,
+mastery) daily in bursts; MBI-exhaustion at each quarterly wave \\
+\addlinespace
+Career capital $C$ &
+Two-factor status/competence composite: \emph{status}---role tenure and
+level, span of control, budget authority, advice-network centrality,
+external reputation markers \citep{becker1993human,cross2003energy};
+\emph{competence}---structured assessment-center or validated
+managerial-skill ratings &
+Archival HR and network indicators at each quarterly wave; competence
+assessment annually; rival bifactor CFA pre-registered (see text) \\
+\addlinespace
+Complexity $O$ &
+Executive job demands \citep{hambrick2005executive,zhu2022executive};
+Work Design Questionnaire complexity and information-processing subscales
+\citep{morgeson2006wdq,parker2017workdesign}; structural load metrics
+\citep{garicano2000hierarchies} &
+Perceptual scales at each quarterly wave; structural metrics (direct
+interfaces, meeting hours from calendar metadata, matrixed reporting
+lines, decision-queue depth) computed continuously, aggregated
+quarterly \\
+\addlinespace
+Impact $I$ &
+Multi-source (360-degree) leadership-effectiveness ratings from
+supervisor, peer, and subordinate panels; objective unit performance
+(unit P\&L or KPI attainment, unit engagement)
+\citep{hambrick2007upper,edmans2016executive} &
+360 ratings semi-annually; objective unit indicators quarterly from
+archival systems, never self-reported \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Vitality.}
+$V$ is operationalized as state subjective vitality
+\citep{ryan1997subjective,ryan2000self}, the construct the model was
+micro-founded on, with the Recovery Experience Questionnaire
+\citep{sonnentag2007recovery} measuring the recovery-side processes that the
+parameter $R$ summarizes. Because a low-vitality equilibrium is not the same
+claim as clinical burnout, the MBI emotional-exhaustion subscale
+\citep{maslach1981burnout,maslach2001job} is administered as a
+\emph{discriminant} marker: vitality and exhaustion should be strongly
+negatively correlated but separable in CFA
+\citep{halbesleben2004burnout,alarcon2011meta}; if they collapse onto a
+single factor, the model's $V$ is not empirically distinct from reversed
+exhaustion and the measurement theory must be revised before any dynamic
+claim is tested.
+
+\paragraph{Career capital and the scalar-$C$ problem.}
+The model treats $C$ as a single stock. Empirically this conflates at least
+two components that need not move together: \emph{status} capital (tenure,
+span, centrality, reputation---the assets that generate complexity load) and
+\emph{assessed competence} (the assets that generate impact). The
+distinction matters because promotion systems can raise status while
+competence fit falls \citep{pluchino2010peter}. We therefore commit, in
+advance, to a rival measurement model: a bifactor CFA with a general
+capital factor plus status and competence group factors, estimated at every
+wave. If the general factor is weak (e.g., explained common variance below
+a pre-declared threshold) or the two group factors show divergent
+trajectories, the scalar-$C$ specification is rejected \emph{as
+measurement}, and the dynamic model must be re-derived with a two-stock
+capital vector before Propositions P1--P6 can be tested. This is a
+deliberate exposure: the theory should not be allowed to survive by
+absorbing a measurement failure into parameter estimates.
+
+\paragraph{Complexity and impact.}
+$O$ combines the perceptual executive-job-demands tradition
+\citep{hambrick2005executive,zhu2022executive} and the complexity and
+information-processing subscales of the Work Design Questionnaire
+\citep{morgeson2006wdq,parker2017workdesign} with structural metrics
+(interfaces, coordination hours, reporting lines) in the spirit of
+\citet{garicano2000hierarchies}; the challenge--hindrance distinction
+\citep{podsakoff2023challenge} is recorded so that the drain kernel can be
+probed for demand-type heterogeneity (P4). $I$ is measured from sources
+other than the focal leader: multi-source ratings and objective unit
+performance \citep{hambrick2007upper,edmans2016executive}.
+
+\paragraph{Longitudinal invariance and common-method defenses.}
+Two requirements apply to every construct. First, \emph{longitudinal
+measurement invariance}: configural, metric, and scalar invariance across
+waves must be established (or partial invariance explicitly modeled) before
+latent trajectories are interpreted as state dynamics; without scalar
+invariance, an apparent damped spiral can be manufactured by drifting item
+intercepts. Second, \emph{common-method-bias defenses}: the design separates
+sources ($V$ self-reported; $I$ other-reported and archival; $C$ and the
+structural half of $O$ archival), separates measurement occasions (ESM
+bursts versus quarterly waves), and includes a theoretically neutral marker
+variable in every wave so that method variance can be partialled in
+sensitivity analyses. Because the central predictions are
+\emph{within-person dynamic signatures}---decay rates, phase relations,
+conservation of $\beta C^{\eta}$---rather than cross-sectional correlations,
+stable individual response styles difference out; but occasion-specific
+method variance does not, and the defenses above are treated as mandatory,
+not optional.
+
+\subsection{Design: measurement bursts inside an accelerated panel}
+\label{sec:emp-design}
+
+The verified linearization at the baseline equilibrium has eigenvalues
+$-0.205\pm0.331i$ (Table~\ref{tab:parameters}), i.e.\ a damped spiral with
+relaxation time $1/0.205\approx4.9$ time units and rotation period
+$2\pi/0.331\approx19$ time units, while the fast vitality timescale is
+$1/R\approx0.33$ time units against the slow capital timescale
+$1/\mu=5$---a separation of roughly $15\times$. Under the illustrative
+weekly calibration (\S\ref{sec:calibration}) these translate to a vitality
+boundary layer of about two working days, capital relaxation of about five
+weeks, and a spiral period of about $19$ weeks. No single sampling cadence
+can resolve both ends of a $15\times$ timescale separation economically. The
+design therefore has two interlocking clocks:
+
+\begin{itemize}
+\item \emph{Daily ESM bursts for the fast $V$ dynamics.} Two working weeks
+(10 working days) of daily short-form measurement (state SVS, REQ items,
+momentary load) once per quarter. Daily sampling oversamples the
+$1/R\approx0.33$-unit boundary layer by design and, by Nyquist logic,
+resolves any within-burst oscillation with period longer than two days;
+its purpose is to estimate the fast recovery--drain balance
+(quasi-equilibrium $V_{\mathrm{qe}}(O)$ of Proposition~\ref{prop:band}(iii))
+and the diffusion scale of $V$.
+\item \emph{Quarterly panel waves for the slow $C$, $O$, $I$ dynamics.}
+Twelve to thirteen waves over three years carrying the full
+Table~\ref{tab:measurement} battery. Sampling the $19$-unit spiral at
+face value requires an interval below the Nyquist bound of $9.5$ time
+units ($\approx9.5$ weeks under the weekly calibration); a rigid
+$13$-week quarterly grid sits above that bound. Three features close the
+gap: (i) wave timing is deliberately \emph{staggered across participants}
+(uniformly jittered within each quarter), so the pooled design is
+irregularly sampled and does not alias a common frequency; (ii) the
+estimator is continuous-time (\S\ref{sec:emp-estimation}) and uses exact
+inter-observation intervals rather than assuming a uniform lag; and
+(iii) the embedded bursts pin the fast dynamics locally, constraining the
+phase of the slow spiral between waves. If pilot bursts indicate real
+timescales as fast as the illustrative calibration, brief monthly pulse
+surveys (three items) are added; the calibration is illustrative, and the
+mapping from model time to calendar time is itself an estimand, so cadence
+is re-derived from pilot estimates rather than trusted a priori.
+\end{itemize}
+
+\paragraph{Accelerated longitudinal structure.}
+Because equilibrium claims concern career horizons far longer than three
+years, the panel is \emph{accelerated}: participants are enrolled in
+staggered role-tenure cohorts (roughly $0$--$2$, $3$--$5$, $6$--$10$, and
+$>\!10$ years in comparable executive roles), so that three calendar years
+of observation span two decades of career time under a convergence
+assumption. The convergence assumption---that cohorts trace segments of a
+common trajectory---is testable via cohort-by-time interactions and is
+itself informative for P1: a single-attractor theory predicts that
+late-tenure cohorts cluster near $(V^{*},C^{*})$ with small oscillations,
+while early-tenure cohorts display the large-amplitude transient
+(overshoot--crash--recovery) of the damped spiral. Persistent
+between-cohort divergence not explained by parameters would count against
+the single-attractor claim (P1's falsifier).
+
+\subsection{Estimation: continuous time, reduced targets}
+\label{sec:emp-estimation}
+
+\paragraph{Continuous-time state-space form.}
+Discrete-time cross-lagged models estimate lag-specific coefficients that
+change with the sampling interval and cannot express the model's actual
+claim, which is a drift field. Estimation therefore uses continuous-time
+structural equation modeling (ctsem-style Kalman filtering) or a Bayesian
+state-space model (Stan) whose drift is the \emph{exact} DLVT right-hand
+side of \eqref{eq:dVdt}--\eqref{eq:complexity}, with additive diffusion and
+the measurement model of \S\ref{sec:emp-measurement} as the observation
+equation:
+\begin{align*}
+\dd V &= \Bigl[R\Bigl(1-\tfrac{V}{\Vmax}\Bigr)
+        -\delta\,O^{\gamma}\tfrac{V}{V+\varepsilon}\Bigr]\dd t
+        + \sigma_V\,\dd W_V, \\
+\dd C &= \bigl[\alpha I - \mu C\bigr]\dd t + \sigma_C\,\dd W_C,
+\qquad O=O_0+\beta C^{\eta},\quad I=\tfrac{CV}{1+\varphi O}.
+\end{align*}
+The stochastic extension is a declared departure from the deterministic
+theory (\S\ref{sec:limitations}); the diffusion terms absorb unmodeled
+shocks, and the drift carries all theoretical content.
+
+\paragraph{Target the dimensionless groups, never the raw parameters.}
+The eleven raw parameters are not jointly identifiable from trajectories:
+as shown in \S\ref{sec:limitations}, they collapse to approximately six
+effective dimensionless groups after nondimensionalizing $V$ by $\Vmax$,
+$C$ by $\beta^{-1/\eta}$, and time by $\mu^{-1}$, with pronounced likelihood
+ridges along $\mu/\alpha$ (which pins $V^{*}$ via \eqref{eq:vstar}) and
+$R/\delta$ (which pins the flux threshold of
+Proposition~\ref{prop:carrying}). Estimation therefore parameterizes the
+model directly in the reduced groups (as computed by the companion
+package's \texttt{dlvt.nondimensional} module), with the raw vector
+recovered, when needed, only up to the declared equivalence classes.
+Reporting raw-parameter point estimates without this reduction would
+manufacture false precision.
+
+\paragraph{Parameter recovery as a mandatory prerequisite.}
+Before any field data are collected, the full estimation pipeline must be
+validated on synthetic data generated from the model at the proposed
+design: the planned number of participants, cohorts, waves, burst lengths,
+jittered observation times, measurement reliabilities, and realistic
+missingness. The companion software ships an executable
+parameter-recovery demonstration (\texttt{dlvt/recovery.py} in the
+repository) that simulates trajectories, fits the state-space model, and
+reports recovery of the reduced groups and the posterior-correlation
+structure. The pre-registered rule is simple: \emph{if the targeted groups
+cannot be recovered from data the design would produce, the design---not
+the analysis---is revised}, and no field wave is launched until recovery
+succeeds. Precedents for fitting dynamic-systems models to intensive
+psychological data exist \citep{cramer2016depression,veldhuis2020burnout};
+the recovery gate is what separates a fit from an estimate.
+
+\subsection{Identification: breaking the ridges with exogenous variation}
+\label{sec:emp-identification}
+
+Cross-sectional equilibrium data identify $\mu/\alpha$ and $R/\delta$ but
+not their components (\S\ref{sec:limitations}); trajectories help but leave
+the ridges nearly flat. Three sources of exogenous variation break them.
+
+\begin{enumerate}
+\item \emph{A status-capital shock identifies $\mu$.} Reorganizations,
+mergers and acquisitions, and---cleanest of all---title-only promotions
+(status raised with duties and assessed competence unchanged) perturb $C$
+without operating through the accumulation channel $\alpha I$. The
+post-shock relaxation of the capital indicators toward the nullcline
+identifies the depreciation rate $\mu$ directly, and $\alpha$ then follows
+from the ratio. Event timing must be plausibly exogenous to the leader's
+own $V$ trajectory; firm-level events (reorg announced above the focal
+leader's level) are preferred to self-initiated moves.
+\item \emph{A randomized recovery manipulation identifies $R$.} A
+sabbatical or structured detachment program
+\citep{davidson2010sabbatical,sonnentag2022recovery}, randomly assigned,
+enters the vitality equation only: it shifts $R$ (and possibly the
+diffusion of $V$) while appearing nowhere in the capital equation except
+through $V$ itself. This cross-equation exclusion restriction separates
+$R$ from $\delta$, exactly as the effort--recovery mechanism
+\citep{meijman1998effort} requires, and doubles as the $R\uparrow$ arm of
+the killer test (\S\ref{sec:emp-killer}).
+\item \emph{An instrument for impact.} $I$ appears in the capital equation
+and is measured with error correlated with rater knowledge of the
+leader's visible energy, threatening both attenuation and reverse-causal
+contamination. Exogenous demand shifters at the unit level---market or
+regulatory shocks to the unit's addressable performance, peer-unit
+average performance in the same firm---serve as instruments: they move
+objective unit outcomes without operating through the focal leader's
+current $V$.
+\end{enumerate}
+
+\paragraph{Posterior-correlation audit.}
+The identification plan carries a quantitative pass/fail criterion: in the
+fitted Bayesian model, the posterior correlation between $\mu$ and $\alpha$
+must satisfy $|\rho(\mu,\alpha)|<0.6$ (and analogously for $R,\delta$).
+If the audit fails, the honest report is the ridge---estimates of
+$\mu/\alpha$ and $R/\delta$ only---and any conclusion requiring the
+components separately (e.g.\ P6's intervention ordering between
+$\mu$-side and $\alpha$-side levers) is withheld.
+
+\subsection{The killer test: a pre-registered $2\times2\times$time field
+experiment}
+\label{sec:emp-killer}
+
+The decisive confrontation is between scope absorption
+(Corollary~\ref{cor:scope}; P3) and intervention asymmetry (P6) on one
+side and the natural managerial instinct on the other. The design is a
+pre-registered $2\times2$ factorial with longitudinal follow-up
+(the full draft pre-registration is \texttt{prereg/PREREGISTRATION.md}):
+
+\begin{description}
+\item[Arms.] (i) \emph{Scope reduction} ($\beta\downarrow$): structural
+delegation of units, interface pruning, span reduction---interventions
+that lower the coupling of the leader's capital to complexity load.
+(ii) \emph{Recovery support} ($R\uparrow$): protected restoration
+capacity---enforced detachment blocks, recovery training, sabbatical
+scheduling \citep{sonnentag2007recovery,davidson2010sabbatical}.
+(iii) \emph{Both}. (iv) \emph{Waitlist control}, receiving the recovery
+program after the endpoint.
+\item[Endpoint.] Primary endpoint at $12$--$18$ months post-randomization.
+The horizon is dictated by the re-expansion mechanism: the transient bump
+from $\beta\downarrow$ decays only as capital re-expands, which takes two
+to three capital relaxation times ($1/\mu$) plus a substantial fraction of
+the spiral period ($\approx19$ time units, about $4.4$ months under the
+illustrative weekly calibration). Twelve to eighteen months covers at
+least $2$--$3$ capital relaxation times even if the true timescales run
+several times slower than the illustrative calibration; a shorter
+endpoint would sample the transient and mistake it for a durable effect.
+\item[Predictions.] DLVT predicts: (a) a durable rise in vitality in the
+$R\uparrow$ arms at the endpoint; (b) in the $\beta\downarrow$-only arm, a
+\emph{transient} vitality bump (visible at roughly $3$ months) that
+decays as capital re-expands and the product $\beta C^{\eta}$
+re-asserts itself; (c) conservation of $\beta C^{\eta}$ in the
+$\beta\downarrow$-only arm---measured complexity $O$ returns to its
+pre-treatment level as capital indicators grow, per
+Corollary~\ref{cor:scope} ($\beta C^{*}=8.008$ at baseline,
+$\varepsilon=0.1$).
+\item[Informative null.] Because prediction (b) is a null at the endpoint,
+the analysis pre-declares a smallest effect size of interest (SESOI) and
+tests \emph{equivalence} of the $\beta\downarrow$-only arm to control at
+$12$--$18$ months, not merely non-significance. A null that falls inside
+the declared equivalence bounds supports P3; an uninstrumented
+non-significant difference would support nothing.
+\item[Power.] Power is established by simulation from the fitted
+state-space model (never by analytic shortcuts that ignore the dynamics):
+synthetic trials at the proposed design are generated under (i) the DLVT
+drift and (ii) a rival ``durable scope effect'' drift, and the design must
+detect the $R\uparrow$ effect, affirm equivalence for $\beta\downarrow$,
+and detect the $3$-month transient, each with adequate probability. The
+working sketch is $60$--$100$ leaders per arm followed over at least $8$
+quarterly waves; the exact numbers are outputs of the simulation, fixed
+in the pre-registration before enrollment.
+\end{description}
+
+\paragraph{What kills the theory.}
+The theory-killing outcome is explicit: \emph{a durable vitality gain in
+the scope-reduction-only arm at $12$--$18$ months, with the product
+$\beta C^{\eta}$ not conserved}---capital not re-expanding, complexity
+durably lowered, vitality durably raised. That outcome falsifies the
+re-expansion mechanism itself (P3 and P6 jointly), not a calibration
+choice, and no kernel-family retreat (P4) rescues it, because the
+conservation claim is the signature of the mechanism rather than of the
+power-law family alone. Conversely, a durable scope effect \emph{with}
+$\beta C^{\eta}$ conserved would indicate a mis-specified kernel (P4
+territory), and a transient-then-decay pattern with conservation is the
+theory's fingerprint.
+
+\subsection{Threats to validity, attrition as data, and ethics}
+\label{sec:emp-threats}
+
+\paragraph{Reverse causality.}
+The theory itself asserts bidirectional coupling ($V$ gates $I$, which
+builds $C$, which loads $O$, which drains $V$), so directionality cannot be
+settled by lag ordering alone. The defenses are structural: continuous-time
+estimation of the full cross-coupled drift rather than interval-dependent
+cross-lagged coefficients, plus the exogenous shocks and randomized
+manipulation of \S\ref{sec:emp-identification}, which move one equation at
+a time.
+
+\paragraph{Survivorship and informative attrition.}
+Leaders at low vitality are more likely to exit---turnover, health leave,
+demotion, or managed departure---so a naive panel over-samples resilient
+survivors and biases $V^{*}$ upward
+\citep{conference2023tenure,tu2025dancing,muller2026systematic}. Attrition
+is therefore modeled, not deleted: a competing-risks survival sub-model
+(voluntary exit, involuntary exit, internal move out of scope) is estimated
+jointly with the state-space model, with the hazard depending on the latent
+$V$ trajectory (a shared-parameter structure). This turns a threat into a
+bonus test: DLVT predicts exit hazard concentrated where the depletion
+ratio \eqref{eq:gamma-ratio} exceeds one and during the transient trough of
+the damped spiral, and a hazard profile unrelated to latent vitality would
+itself be evidence against the model's phenomenology.
+
+\paragraph{Cadence aliasing.}
+A rigid quarterly grid samples the illustrative $19$-unit spiral below its
+Nyquist rate and could alias oscillation into spurious slow drift. The
+mitigations of \S\ref{sec:emp-design}---jittered wave timing, embedded
+daily bursts, continuous-time likelihoods over exact intervals, and
+pilot-based cadence revision---are pre-committed, and the aliasing risk is
+re-assessed once pilot estimates of the empirical timescales exist.
+
+\paragraph{Construct validity.}
+The principal exposures are the scalar-$C$ conflation (addressed by the
+pre-registered bifactor rival, \S\ref{sec:emp-measurement}), the
+discriminability of vitality from reversed exhaustion
+\citep{maslach1981burnout}, and the gap between the structural coupling
+$\beta$ and its operationalization through complexity indicators; demand
+heterogeneity \citep{podsakoff2023challenge,ong2023configural,bakker2017jdr,
+demerouti2001job} is recorded so that kernel mis-specification (P4) can be
+distinguished from measurement failure.
+
+\paragraph{Ethics and governance.}
+The program studies people at their most professionally exposed, and the
+governance is part of the design, not an afterthought. (i) A strict
+research--HR firewall: individual-level vitality, exhaustion, and
+survival-model outputs are never available to the employer and never enter
+personnel decisions; only pre-agreed aggregate reports leave the research
+environment. (ii) Opt-in consent with per-wave re-consent, and separate
+consent for passive metadata (calendar and network indicators), with data
+minimization and on-site aggregation. (iii) Neutral participant-facing
+language throughout: the construct is described as workload, recovery, and
+sustainable performance; theoretical labels such as ``low-vitality
+equilibrium''---and, a fortiori, the retired legacy label of earlier
+drafts (Definition~\ref{def:lowvitality})---never appear in participant
+materials. (iv) The control condition is a waitlist: control-arm
+participants receive the recovery program after the primary endpoint, so no
+one is denied a plausibly beneficial intervention, merely scheduled later.
+(v) Institutional review and, where applicable, works-council approval
+precede enrollment, and the pre-registration binds the analysis before the
+first participant is randomized.
